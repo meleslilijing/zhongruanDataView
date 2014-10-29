@@ -1,0 +1,289 @@
+/*
+	css reset
+*/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    line-height:1;
+}
+
+:focus {
+        outline: 1;
+}
+
+article,aside,canvas,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section,summary { 
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    border:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+mark {
+    background-color:#ff9;
+    color:#000; 
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted #000;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+hr {
+    display:block;
+    height:1px;
+    border:0;   
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+/*
+	base
+*/
+.clearboth {
+	clear:both;
+}
+.fl {
+	float:left;
+}
+.w486 {
+	width: 486px;
+}
+.w498 {
+	width: 498px;
+}
+.con-h300 {
+	height: 300px;
+}
+.con-h322 {
+	height: 322px;
+}
+.con-h450 {
+	height: 450px;
+}
+
+/*
+	common
+*/
+body {
+	background-image: url("纹理");
+	background-repeat: repeat;
+	background-color: #3b80db;
+	width: 1024px;
+	height:1526px;
+	color: #ffffff;
+	font-family: "Franklin Gothic Book","微软雅黑";
+	overflow:hidden;
+}
+.container {
+	/*background: url("高光") no-repeat #3b80db;*/
+}
+.header {
+	width: 100%;
+	height: 45px;
+	background: #9dc0ed;
+	border-bottom: 1px solid #3b82b2;
+	margin-bottom: 18px;
+	position: relative;
+}
+.header .logo img{
+	width: 80px;
+	height: 100%;
+	background-color:blue;
+}
+.header .user-image {
+	width: 35px;
+	height: 35px;
+	border-width: 0px;
+	border-radius: 17px;
+	position: absolute;
+	top: 4px;
+	right: 14px;
+	background-color:blue;
+}
+
+.menu {
+	float: left;
+	width: 135px;
+	height: 1365px;
+	margin-right: 6px;
+	background-color: #a7d3f1;
+	background-image: url("纹理");
+	background-repeat: repeat;
+}
+.menu-header {
+	text-indent: 0!important;
+	text-align: center;
+}
+.menu-list {
+
+}
+.menu-list .item{
+	height:34px;
+	font-weight: bold;
+	text-indent: 21px;
+	line-height: 34px;
+	border-bottom:1px solid #2a67b3;
+}
+.menu-list .selected {
+	background-color: #1a9af3;
+	border-bottom-color: #1a9af3;
+}
+
+.main {
+	float: left;
+}
+.main .wrap {
+	border:1px solid #0094da;
+	margin-bottom:21px;
+}
+
+.main .wrap-header {
+	height: 38px;
+	background-color: #017cd2;
+	border: 1px solid #0094da;
+	line-height: 41px;
+	text-indent: 48px;
+	position: relative;
+} 
+.main .wrap-header .wrap-icon {
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	position: absolute;
+	left: 15px;
+	top: 10px;
+	background-color:blue;
+}
+.main .wrap-content {
+	background-color: #0267ad;
+}
+
+/*
+	page
+*/
+#manager .main,
+#administrator .main {
+	width: 871px;
+}
+
+#employee .main {
+	padding-left: 8px;
+}
+#column {
+	margin-left: 18px;
+}
+#calendar .date{
+	width: 304px;
+	height: 100%;
+	border-right: 1px solid #0094da;
+}
+#calendar .countdown {
+	width: 181px;
+	height: 100%;
+}
+
+/*
+	日历组件 #calendar .date
+*/
+#calendar .date {
+	position: relative;
+}
+
+#calendar .date table {
+	width: 266px;
+	margin: 15px auto 0 auto;
+}
+
+#calendar .date caption {
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+}
+#calendar .date tr {
+	height: 40px;
+	line-height: 40px;
+	font-size: 16px;
+}
+#calendar .date th {
+	color: #4fc4f6;
+}
+
+#calendar .date td {
+	color: #8a96b6;
+	text-align: center;
+}
+#calendar .btn{
+	width:30px;
+	height:30px;
+	background-color: blue;
+	position: absolute;
+	top: 25px;
+}
+#calendar #prevMonth {
+	left: 20px;
+}
+#calendar #nextMonth {
+	right:20px;
+}
