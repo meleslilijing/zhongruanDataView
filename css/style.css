@@ -101,6 +101,7 @@ input, select {
 /*
 	base
 */
+
 .clearboth {
 	clear:both;
 }
@@ -123,6 +124,7 @@ input, select {
 	height: 450px;
 }
 
+
 /*
 	common
 */
@@ -136,6 +138,9 @@ body {
 	font-family: "Franklin Gothic Book","微软雅黑";
 	overflow:hidden;
 }
+
+
+
 .container {
 	/*background: url("高光") no-repeat #3b80db;*/
 }
@@ -217,8 +222,10 @@ body {
 	background-color:blue;
 }
 .main .wrap-content {
+	overflow: hidden;
 	background-color: #0267ad;
 }
+
 
 /*
 	page
@@ -242,6 +249,25 @@ body {
 #calendar .countdown {
 	width: 181px;
 	height: 100%;
+}
+#deliverable .table-box {
+	margin-top: 40px;
+	width: 782px;
+	height: 334px;
+}
+
+/*
+	SVG	
+*/
+svg {
+	width:100%;
+	height:100%;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
 
 /*
@@ -286,4 +312,21 @@ body {
 }
 #calendar #nextMonth {
 	right:20px;
+}
+
+/*
+	table 组件
+*/
+table {
+	width: 100%;
+}
+.mod-table th,
+.mod-table td {
+	height: 36px;
+	line-height: 36px;
+	border:1px solid #ffffff;
+}
+.table-box {
+	margin: 0 auto;
+	overflow: auto;
 }
