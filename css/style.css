@@ -101,7 +101,6 @@ input, select {
 /*
 	base
 */
-
 .clearboth {
 	clear:both;
 }
@@ -138,9 +137,6 @@ body {
 	font-family: "Franklin Gothic Book","微软雅黑";
 	overflow:hidden;
 }
-
-
-
 .container {
 	/*background: url("高光") no-repeat #3b80db;*/
 }
@@ -266,8 +262,15 @@ svg {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: #0778c7;
   shape-rendering: crispEdges;
+}
+.axis text {
+	fill: #c3d7de;
+}
+.legen text{
+	fill:#ffffff;
+	font-size: 13px;
 }
 
 /*
@@ -326,7 +329,30 @@ table {
 	line-height: 36px;
 	border:1px solid #ffffff;
 }
+/*.mod-table .wrap-content {
+	position: relative;
+}
+.mod-table form {
+	position: absolute;
+}*/
 .table-box {
 	margin: 0 auto;
 	overflow: auto;
+}
+
+/*
+	lines 组件
+*/
+#line .wrap-content {
+	position: relative;
+}
+#line select {
+	width: 129px;
+	height: 25px;
+	padding-left: 20px;
+	border:0;
+	color: #1a9af3;
+	position: absolute;
+	top: 27px;
+	left: 48px;
 }
