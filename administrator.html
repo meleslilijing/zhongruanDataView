@@ -15,12 +15,9 @@
 			</div>
 			<div class="content">
 				<div class="menu">
+					<div class="menu-header">DEPARTMENT</div>
 					<ul class="menu-list">
-						<div class="menu-header item">DEPARTMENT</div>
-						<li class="item">Department</li>
-						<li class="item selected">Department</li>
-						<li class="item">Department</li>
-						<li class="item">Department</li>
+						
 					</ul>
 				</div>
 				<div class="main">
@@ -30,7 +27,7 @@
 							
 						</div>
 					</div>
-					<div class="wrap" id="line">
+					<div class="wrap select" id="line">
 						<div class="wrap-header"><i class="wrap-icon"></i>THE STATISTIC INFORMATION IN MONTHS</div>
 						<div class="wrap-content con-h450">
 							
@@ -60,81 +57,80 @@
 								<select id="market">
 									<option value="all">ALL</option>
 								</select>
-
 							</form>
 							<div class="table-box">
 								<table class="table">
 									<tr>
-										<th class="Deliverable-ID">Deliverable ID</th>
-										<th class="Deliveralbe-Type">Deliveralbe Type</th>
-										<th class="RP-Start-Date">Reporting Period Start Date</th>
-										<th class="General-Comments">General Comments</th>
+										<th class="Deliverable-ID">Deliverable Title</th>
+										<th class="Deliveralbe-Type">DocFlow Status</th>
+										<th class="RP-Start-Date">Next Milestone Date </th>
+										<th class="General-Comments">PDO</th>
 									</tr>
 									<tr>
 										<td>Diltiazem 2010 CO for Romania</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td><i></i>Assigned</td>
+										<td>2013-4-26</td>
+										<td></td>
 									</tr>
 									<tr>
 										<td>Alprostadil - Caverject 2011 PSUR</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td><i></i>Completed</td>
+										<td>2013-4-19</td>
+										<td></td>
 									</tr>
 									<tr>
 										<td>Ampicillin Sulbactam 2015 PSUR</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td><i></i>Discontinued</td>
+										<td>2013-4-19</td>
+										<td></td>
 									</tr>
 									<tr>
 										<td>Amlodipine 2010 IB</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td><i></i>Review</td>
+										<td>2013-4-19</td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 									<tr>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
-										<td>1</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 								</table>								
 							</div>
@@ -146,9 +142,10 @@
 		</div>
 		<script src="./lib/d3.v3.min.js"></script>
 		<script src="./lib/zepto.min.js"></script>
+		<script src="./lib/touch.js"></script>
 		<script src="./lib/sea.js"></script>
 		<script>
-			seajs.use("./module/scripts.js")
+			seajs.use("./module/administrator.js")
 		</script>
 	</body>
 </html>

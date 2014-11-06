@@ -15,31 +15,128 @@
 			</div>
 			<div class="content">
 				<div class="menu">
+					<div class="menu-header">NAME</div>
 					<ul class="menu-list">
-						<div class="menu-header item">NAME</div>
-						<li class="item">name</li>
-						<li class="item selected">name</li>
-						<li class="item">name</li>
-						<li class="item">name</li>
+						
 					</ul>
 				</div>
 				<div class="main">
-					<div class="wrap" >
+					<div class="wrap pie" >
 						<div class="wrap-header"><i class="wrap-icon"></i>OVERALL STATISTIC INFORMATION</div>
 						<div class="wrap-content con-h300">
 							
 						</div>
 					</div>
-					<div class="wrap">
-						<div class="wrap-header"><i class="wrap-icon"></i>THE STATISTIC INFORMATION IN MONTHS</div>
+					<div class="wrap select column_slide">
+						<div class="wrap-header">
+							<i class="wrap-icon"></i>THE STATISTIC INFORMATION IN MONTHS
+						</div>
 						<div class="wrap-content con-h450">
-							
 						</div>
 					</div>
-					<div class="wrap">
+					<div class="wrap mod-table" id="deliverable">
 						<div class="wrap-header"><i class="wrap-icon"></i>DELIVERABLE ALL</div>
 						<div class="wrap-content con-h450">
-							
+							<form action="">
+
+								<label for="group">Group：</label>
+								<select id="group">
+									<option value="all">ALL</option>
+								</select>
+
+								<label for="workGroup">Workgroup：</label>
+								<select id="workGroup">
+									<option value="all">ALL</option>
+								</select>
+
+								<label for="deliveralbe-type">Deliveralbe Type:</label>
+								<select id="deliveralbe-type">
+									<option value="all">ALL</option>
+								</select>
+
+								<label for="market">Market:</label>
+								<select id="market">
+									<option value="all">ALL</option>
+								</select>
+
+							</form>
+							<div class="table-box">
+								<table class="table">
+									<tr>
+										<th class="Deliverable-ID">Deliverable Title</th>
+										<th class="Deliveralbe-Type">DocFlow Status</th>
+										<th class="RP-Start-Date">Next Milestone Date </th>
+										<th class="General-Comments">PDO</th>
+									</tr>
+									<tr>
+										<td>Diltiazem 2010 CO for Romania</td>
+										<td><i></i>Assigned</td>
+										<td>2013-4-26</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Alprostadil - Caverject 2011 PSUR</td>
+										<td><i></i>Completed</td>
+										<td>2013-4-19</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Ampicillin Sulbactam 2015 PSUR</td>
+										<td><i></i>Discontinued</td>
+										<td>2013-4-19</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Amlodipine 2010 IB</td>
+										<td><i></i>Review</td>
+										<td>2013-4-19</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</table>								
+							</div>
+
 						</div>
 					</div>
 				</div>	
@@ -47,9 +144,10 @@
 		</div>
 		<script src="./lib/d3.v3.min.js"></script>
 		<script src="./lib/zepto.min.js"></script>
+		<script src="./lib/touch.js"></script>
 		<script src="./lib/sea.js"></script>
 		<script>
-			seajs.use("./module/scripts.js")
+			seajs.use("./module/manager.js")
 		</script>
 	</body>
 </html>
