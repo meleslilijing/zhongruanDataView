@@ -23,6 +23,17 @@ define(function(require, exports, module) {
 		return KeyArray
 	}
 
+	$.ajax({
+		type: "GET",
+		dataType: "jsonp",
+		url:"http://localhost:8080/Deliverable/service/employee/allWorkgroup",
+		success: function(data) {
+			console.log("输出所有员工姓名")
+			console.log(data)
+		}
+	})
+
+
 	module.exports = {
 		init: function() {
 

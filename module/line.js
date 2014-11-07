@@ -13,9 +13,8 @@ define(function(require, exports, module) {
 		]
 
 		var dataset = []
-		// var isAllZero = true
 
-		console.log("pie format:")
+		// 将数据对象，按顺序排序。
 		for (var i = 0; i < sortArr.length; i++) {
 
 			var target = sortArr[i]
@@ -24,7 +23,6 @@ define(function(require, exports, module) {
 			for (var dataPoint in data) {
 
 				if (dataPoint == target) {
-					console.log(data[dataPoint])
 					obj.key = dataPoint
 					obj.value = data[dataPoint]
 
@@ -33,19 +31,33 @@ define(function(require, exports, module) {
 				}
 
 			} // end for dataPoint in data
-
-			// if (obj.value) {
-			// 	isAllZero = false
-			// }
+			
 		} // end for sortArr
 
-		// 如果数据均为空, 将数据都改为 1, 并提示
-		// if (isAllZero) {
-		// 	for (var i = 0; i < dataset.length; i++) {
-		// 		dataset[i].value = 1
-		// 	}
-		// }
+		// 如果某条数据，数组中的所有元素均为0，生成随机数据
+		for (var obj in dataset) {
+			
+			var isAllZero = true
 
+			var valueArr = dataset[obj].value
+
+			// 判断当前对象数组是否都为0
+			for (var i = 0; i < valueArr.length; i ++) {
+				
+				if(valueArr[i]) {
+					isAllZero = false
+					break
+				}
+
+			}
+
+			// isAllZero = true ==> 生成随机数
+			for (var i = 0; i < valueArr.length; i++) {
+				valueArr[i] = parseInt(Math.random()*100)
+			}
+
+		}
+		
 		return dataset
 	} // end format
 
@@ -56,9 +68,9 @@ define(function(require, exports, module) {
 
 		for (var arr in data) {
 
-			for (var i = 0; i < data[arr].length; i++) {
-				max = Math.max(data[arr][i], max)
-				min = Math.min(data[arr][i], min)
+			for (var i = 0; i < data[arr].value.length; i++) {
+				max = Math.max(data[arr].value[i], max)
+				min = Math.min(data[arr].value[i], min)
 			}
 
 		}
@@ -96,10 +108,10 @@ define(function(require, exports, module) {
 				})
 
 			var xScale = d3.scale.ordinal()
-				.rangePoints([0, width], 0)
+					.rangePoints([0, width], 0)
 				
 			var yScale = d3.scale.linear()
-				.range([height, 0])
+					.range([height, 0])
 
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom")
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5)
@@ -111,11 +123,9 @@ define(function(require, exports, module) {
 					.x(function(d, i) {
 						return xScale(d.month)
 					})
-					.y(function(d) {
+					.y(function(d, i) {
 						return yScale(d.data)
 					})
-
-			///////////////////////////////////////
 
 			$.ajax({
 				type: "GET",
@@ -123,16 +133,7 @@ define(function(require, exports, module) {
 				url: "http://localhost:8080/Deliverable/service/admin/departmentMonth/all/2014 ",
 				success: function(data) {
 
-					console.log("加载数据：")
-					console.log(data)
-
-					// 加载数据
-					var data = require("../data/department.js")
-
 					data = formatData(data)
-
-					console.log("示例数据：")
-					console.log(data)
 
 					var extent = findMaxAndMin(data)
 
@@ -140,7 +141,8 @@ define(function(require, exports, module) {
 					yScale.domain(extent)
 
 					chart.append("g").classed("x axis", true).call(xAxis)
-						.attr("transform", "translate(0," + height + ")")
+							.attr("transform", "translate(0," + height + ")")
+
 					chart.append("g").classed("y axis", true).call(yAxis)
 					
 					d3.selectAll(".chart .y .tick line").attr({
@@ -153,13 +155,14 @@ define(function(require, exports, module) {
 					})
 
 					// 折线图内容
-					var chart_content = chart.append("g").classed("chart-content", true)
+					var chart_content = chart.append("g")
+							.classed("chart-content", true)
 
-					var colorNum = 0
+
 					for(var lineName in data) {
 
-						var data_line = data[lineName]
-						var lineDatas = []
+						var data_line = data[lineName].value	// 当前折线数据				
+						var lineDatas = []				// 处理后的折线数据
 
 						for (var i = 0; i < months.length; i++) {
 							
@@ -174,16 +177,11 @@ define(function(require, exports, module) {
 						chart_content.append("path")
 						.attr({
 							"d": line(lineDatas),
-							"stroke": "black",
+							"stroke": colors[lineName],
 							"stroke-width": 2,
 							"fill": "none",
-							"color": function() {
-								return colors[colorNum++]	
-							},
 							"name": lineName
 						})
-
-
 					}
 
 					// 添加图例
@@ -205,7 +203,7 @@ define(function(require, exports, module) {
 
 					var legen_item = svg.append("g").classed("legen", true)
 										.selectAll()
-											.data(legenArr).enter()
+											.data(data).enter()
 										.append("g").classed("legen-item", true)
 											.attr({
 												"transform": function(d, i) {
@@ -228,21 +226,13 @@ define(function(require, exports, module) {
 
 					legen_item.append("text")
 						.text(function(d) {
-							return d
+							
+							return d.key
 						})
 						.attr("transform", "translate(22, 13)")
 					
 				}	// end success
 			})	// end $.ajax
-			
-
-			///////////////////////////////////////
-
-			// 引入department 数据
-			! function() {
-
-			}()
-
 
 		},
 

@@ -3,6 +3,8 @@ define(function(require, exports, module) {
 	// 阻止事件冒泡
 	!function() {
 
+		console.log("others.js 阻止事件冒泡")
+
 		// 阻止侧边栏的事件冒泡
 		touch.on(".menu-list", "drag swipe hold", function (ev) {
 			ev.stopPropagation()
@@ -12,7 +14,7 @@ define(function(require, exports, module) {
 		touch.on(".table-box", "drag swipe hold", function (ev) {
 			ev.stopPropagation()
 		})
-	}
+	}()
 	
  	var _touchMenu = function () {
 

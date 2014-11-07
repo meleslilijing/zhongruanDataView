@@ -102,12 +102,22 @@ define(function(require, exports, module) {
 					.data(pie(data))
 					.enter()
 					.append("g").classed("arc", true)
+					.attr({
+						"name": function(d) {
+							return d.data.key
+						},
+						color: function(d) {
+							return colors(d.data.key)
+						}
+					})
 
+				console.log("paht")
 				// console.log("pie color:")
 				g.append("path")
-					.attr("d", arc)
+					.attr({
+						d: arc,
+					})
 					.style("fill", function(d) {
-						// console.log("key:%s, color:%s", d.data.key, colors(d.data.key))
 						return colors(d.data.key)
 					})
 
@@ -158,6 +168,9 @@ define(function(require, exports, module) {
 							},
 							name: function(d) {
 								return d.key
+							},
+							color: function(d) {
+								return colors(d.key)
 							}
 						})
 
@@ -168,9 +181,9 @@ define(function(require, exports, module) {
 						width: legen_rect.width,
 						height: legen_rect.height,
 						fill: function(d) {
-							// console.log("key:%s, color:%s", d.key, colors(d.key))
 							return colors(d.key)
 						}
+						
 					})
 
 				legen_item.append("text")
@@ -189,8 +202,84 @@ define(function(require, exports, module) {
 					.style({
 						"font-size": "18px"
 					})
+
+				// Pie图的交互效果
+				animationPie()
+
+
 			} // end success
 		}) // end $.ajax
+	}
+
+	var animationPie = function() {
+		
+		// 点击图例
+		touch.on(".pie svg .legen-item rect, .pie svg .legen-item text", "tap", function (ev) {
+
+
+			$this = $(this).parent()
+			$siblings = $this.siblings()
+
+
+			var index = $this.index()
+			console.log(index)
+
+
+			var name = $this.attr("name")
+			var color = $this.attr("color")
+
+			// 选择节点上色
+			$this.find("rect").css("fill", color)
+			$this.find("text").css("fill", "#ffffff")
+
+			// 兄弟节点黑白
+			$siblings.find("rect").css("fill", "#333")
+			$siblings.find("text").css("fill", "#333")
+
+			// tap 相同name的 环形图
+			// var name = "\'" + name + "\'"
+			// $(".pie .pieSvg .arc:nth-child("+index+") text").trigger("tap")
+			
+			// 阻止事件冒泡
+			ev.stopPropagation()
+
+		})
+
+		// 点击环形图
+		touch.on(".pie .pieSvg .arc path, .pie .pieSvg .arc text", "tap", function (ev) {
+
+			$this = $(this).parent()
+			$siblings = $this.siblings()	
+
+			var index = $this.index()
+			console.log(index)
+
+			var name = $this.attr("name")
+			var color = $this.attr("color")
+
+			$this.find("path").css("fill", color)
+			$this.find("text").css("fill", "#ffffff")
+
+			$siblings.find("path").css("fill", "#333")
+			$siblings.find("text").css("fill", "#333")
+
+			// tap 相同name的 环形图
+			// var name = "\"" + name + "\""
+			// $(".pie svg .legen-item[name="+name+"] text").trigger("tap")
+
+			// 阻止事件冒泡
+			ev.stopPropagation()
+		})
+
+		// touch.on(".pie svg", "tap", function(ev) {
+			
+		// 	var legen = $(".pie svg .legen-item")
+		// 	var pie = $(".pie .pieSvg .arc")
+
+		// 	var legen.find("rect").css("fill", color)
+
+		// })
+
 	}
 
 	module.exports = {
@@ -214,6 +303,8 @@ define(function(require, exports, module) {
 
 			// 加载数据
 			drawPie(url)
+
+			
 		},
 
 	} // end exports
