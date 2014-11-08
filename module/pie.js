@@ -111,7 +111,6 @@ define(function(require, exports, module) {
 						}
 					})
 
-				console.log("paht")
 				// console.log("pie color:")
 				g.append("path")
 					.attr({
@@ -205,41 +204,29 @@ define(function(require, exports, module) {
 
 				// Pie图的交互效果
 				animationPie()
+				
 
 
 			} // end success
 		}) // end $.ajax
 	}
 
+
 	var animationPie = function() {
 		
+		var isColor = true
+
 		// 点击图例
 		touch.on(".pie svg .legen-item rect, .pie svg .legen-item text", "tap", function (ev) {
 
-
-			$this = $(this).parent()
-			$siblings = $this.siblings()
-
-
-			var index = $this.index()
-			console.log(index)
-
-
-			var name = $this.attr("name")
-			var color = $this.attr("color")
-
-			// 选择节点上色
-			$this.find("rect").css("fill", color)
-			$this.find("text").css("fill", "#ffffff")
-
-			// 兄弟节点黑白
-			$siblings.find("rect").css("fill", "#333")
-			$siblings.find("text").css("fill", "#333")
-
-			// tap 相同name的 环形图
-			// var name = "\'" + name + "\'"
-			// $(".pie .pieSvg .arc:nth-child("+index+") text").trigger("tap")
+			var index = $(this).parent().index()
+			console.log("index:", index)
 			
+			pathAnimation(index)
+			legenAnimation(index)
+
+			isColor = false
+
 			// 阻止事件冒泡
 			ev.stopPropagation()
 
@@ -248,37 +235,81 @@ define(function(require, exports, module) {
 		// 点击环形图
 		touch.on(".pie .pieSvg .arc path, .pie .pieSvg .arc text", "tap", function (ev) {
 
-			$this = $(this).parent()
-			$siblings = $this.siblings()	
+			var index = $(this).parent().index()
 
-			var index = $this.index()
-			console.log(index)
+			pathAnimation(index)
+			legenAnimation(index)
 
-			var name = $this.attr("name")
-			var color = $this.attr("color")
-
-			$this.find("path").css("fill", color)
-			$this.find("text").css("fill", "#ffffff")
-
-			$siblings.find("path").css("fill", "#333")
-			$siblings.find("text").css("fill", "#333")
-
-			// tap 相同name的 环形图
-			// var name = "\"" + name + "\""
-			// $(".pie svg .legen-item[name="+name+"] text").trigger("tap")
+			isColor = false
 
 			// 阻止事件冒泡
 			ev.stopPropagation()
 		})
 
-		// touch.on(".pie svg", "tap", function(ev) {
+		touch.on(".pie svg", "tap", function (ev) {
+
+			if (!isColor) {
+				recolorPie()	
+				isColor = true
+			}
+
+			ev.stopPropagation()
+		})
+
+		
+
+	}  // animationPie()
+
+	var legenAnimation = function (index) {
+
+		var index = index || 0
+
+		$this = $(".pie svg .legen-item").eq(index)
+		$siblings = $this.siblings()
+
+		var color = $this.attr("color")
+
+		// 选择节点上色
+		$this.find("rect").css("fill", color)
+		$this.find("text").css("fill", "#ffffff")
+
+		// 兄弟节点黑白
+		$siblings.find("rect").css("fill", "#333")
+		$siblings.find("text").css("fill", "#333")
+	}
+
+	var pathAnimation = function (index) {
+
+		var index = index || 0
+
+		$this = $(".pie .pieSvg .arc").eq(index)
+		$siblings = $this.siblings()	
+
+		var color = $this.attr("color")
+
+		$this.find("path").css("fill", color)
+		$this.find("text").css("fill", "#ffffff")
+
+		$siblings.find("path").css("fill", "#333")
+		$siblings.find("text").css("fill", "#333")
+	}
+
+	var recolorPie = function () {
+
+		$path = $(".pie .pieSvg .arc")
+		$legen = $(".pie svg .legen-item")
+
+		for (var i = 0; i < $legen.size(); i++) {
 			
-		// 	var legen = $(".pie svg .legen-item")
-		// 	var pie = $(".pie .pieSvg .arc")
+			var color = window.colors(i)
 
-		// 	var legen.find("rect").css("fill", color)
+			$path.eq(i).find("path").css("fill", color)
+			$path.eq(i).find("text").css("fill", "#ffffff")
 
-		// })
+			$legen.eq(i).find("rect").css("fill", color)
+			$legen.eq(i).find("text").css("fill", "#ffffff")
+
+		}
 
 	}
 
@@ -296,9 +327,9 @@ define(function(require, exports, module) {
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 
 			if(type == "administrator") {
-				url = BASE_URL + "/admin/departmentYear"	+ name + year 
+				url = BASE_URL + "/admin/departmentYear"+ name + year 
 			} else if(type == "manager") {
-				url = BASE_URL + "/employer/employees/" + name + year + employeeName
+				url = BASE_URL + "/employer/employees" + name + year + employeeName
 			}
 
 			// 加载数据

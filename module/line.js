@@ -78,6 +78,14 @@ define(function(require, exports, module) {
 		return [min, max]
 	}
 
+	var animationPie = function () {
+
+		touch.on("", "tap", function(ev) {
+
+		})
+		
+	}
+
 	module.exports = {
 
 		init: function() {
@@ -195,11 +203,7 @@ define(function(require, exports, module) {
 												{x:218, y:65}, {x:328, y:65}, {x:435, y:65}
 											]
 
-					// 图例 标签属性
-					var legen_rect = {
-						"width":13, 
-						"height":13, 
-					}
+					
 
 					var legen_item = svg.append("g").classed("legen", true)
 										.selectAll()
@@ -226,7 +230,6 @@ define(function(require, exports, module) {
 
 					legen_item.append("text")
 						.text(function(d) {
-							
 							return d.key
 						})
 						.attr("transform", "translate(22, 13)")

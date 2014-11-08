@@ -3,8 +3,6 @@ define(function(require, exports, module) {
 	// 阻止事件冒泡
 	!function() {
 
-		console.log("others.js 阻止事件冒泡")
-
 		// 阻止侧边栏的事件冒泡
 		touch.on(".menu-list", "drag swipe hold", function (ev) {
 			ev.stopPropagation()
@@ -60,8 +58,6 @@ define(function(require, exports, module) {
 					console.error("获取某部门姓名列表，需要提供部门名称 departmentName。")
 					return
 				}
-
-				console.log("添加某部门员工列表 nameList...")
 
 				// 某个部门的员工列表
 				var INTERMEDIATE = "/employer/employees/" + departmentName

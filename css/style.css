@@ -259,7 +259,6 @@ body {
 	height: 334px;
 }
 
-
 /*
 	SVG	
 */
@@ -280,6 +279,10 @@ svg {
 	fill:#ffffff;
 	font-size: 13px;
 }
+#employee .x text{
+	visibility: hidden;
+}
+
 
 /*
 	日历组件 #calendar .date

@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 
 	// administrator 初始化
 	!function() {
+		
 		// 默认加载
 		window.userType = "administrator"
 		window.departmentName = "/all"
@@ -16,6 +17,11 @@ define(function(require, exports, module) {
 					"#ff9a38", "#ffb638", "#ffcf3e",
 					"#ffd967", "#ffde95", "#85d678"
 				])
+
+		window.legen_rect = {
+			"width": 13, 
+			"height": 13, 
+		}
 	}()
 
 	// 添加所有员工列表
