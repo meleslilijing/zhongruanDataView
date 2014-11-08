@@ -111,7 +111,6 @@ define(function(require, exports, module) {
 						}
 					})
 
-				// console.log("pie color:")
 				g.append("path")
 					.attr({
 						d: arc,
@@ -173,7 +172,6 @@ define(function(require, exports, module) {
 							}
 						})
 
-				// console.log("rect color:")
 				legen_item
 					.append("rect")
 					.attr({
@@ -220,7 +218,6 @@ define(function(require, exports, module) {
 		touch.on(".pie svg .legen-item rect, .pie svg .legen-item text", "tap", function (ev) {
 
 			var index = $(this).parent().index()
-			console.log("index:", index)
 			
 			pathAnimation(index)
 			legenAnimation(index)
@@ -249,15 +246,12 @@ define(function(require, exports, module) {
 		touch.on(".pie svg", "tap", function (ev) {
 
 			if (!isColor) {
-				recolorPie()	
+				recolorAnimation()	
 				isColor = true
 			}
 
 			ev.stopPropagation()
 		})
-
-		
-
 	}  // animationPie()
 
 	var legenAnimation = function (index) {
@@ -294,7 +288,7 @@ define(function(require, exports, module) {
 		$siblings.find("text").css("fill", "#333")
 	}
 
-	var recolorPie = function () {
+	var recolorAnimation = function () {
 
 		$path = $(".pie .pieSvg .arc")
 		$legen = $(".pie svg .legen-item")

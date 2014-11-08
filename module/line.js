@@ -61,7 +61,7 @@ define(function(require, exports, module) {
 		return dataset
 	} // end format
 
-	var findMaxAndMin = function(data) {
+	var extentData = function(data) {
 
 		var max = 0,
 			min = 0
@@ -78,12 +78,96 @@ define(function(require, exports, module) {
 		return [min, max]
 	}
 
-	var animationPie = function () {
+	var animationLine = function () {
 
-		touch.on("", "tap", function(ev) {
+		var isColor = true
 
+		touch.on(".line .legen-item rect, .line .legen-item text", "tap", function (ev) {
+
+			var index = $(this).parent().index()
+
+			lengenAnimation(index)
+			pathAnimation(index)
+
+			isColor = false
+
+			ev.stopPropagation()
 		})
+
+		touch.on(".line svg", "tap", function (ev) {
+
+			if (!isColor) {
+				recolorAnimation()	
+				isColor = true
+			}
+
+			ev.stopPropagation()
+		})
+
+	}
+
+	var lengenAnimation = function (index) {
+
+		var index = index || 0
+
+		$this = $(".line .legen-item").eq(index)
+		$siblings = $this.siblings()
+
+		var color = $this.attr("color")
+
+		// 选择节点上色
+		$this.find("rect").css("fill", color)
+		$this.find("text").css("fill", "#ffffff")
+
+		// 兄弟节点黑白
+		$siblings.find("rect").css("fill", "#333")
+		$siblings.find("text").css("fill", "#333")
+
+	}
+
+	var pathAnimation = function (index) {
+
+		var index = index || 0
+
+		$this = $(".line .chart-content path").eq(index)
 		
+		$siblings = $this.siblings()	
+
+		var color = $this.attr("color")
+
+		$this.css({
+			"stroke": color,
+			"opacity": 1
+		})
+
+		$siblings.css({
+			"opacity": 0.1,
+			"stroke": "#333"
+		})
+		// $this.find("text").css("fill", "#ffffff")	// 还未显示文字
+
+		// $siblings.find("text").css("fill", "#333")
+	}
+
+	var recolorAnimation = function () {
+
+		$path = $(".line path")
+		$legen = $(".line .legen-item")
+
+		for (var i = 0; i < $legen.size(); i++) {
+			
+			var color = window.colors(i)
+
+			$path.eq(i).css({
+				"stroke": color,
+				"opacity": 1
+			})
+
+			$legen.eq(i).find("rect").css("fill", color)
+			$legen.eq(i).find("text").css("fill", "ffffff")
+
+		}
+
 	}
 
 	module.exports = {
@@ -91,7 +175,7 @@ define(function(require, exports, module) {
 		init: function() {
 
 			// 添加select
-			var selectStr = "#line .wrap-content"
+			var selectStr = ".line .wrap-content"
 			others.addSelect(selectStr)
 
 			// 添加图表
@@ -109,7 +193,7 @@ define(function(require, exports, module) {
 			var width = 745	// 图表尺寸
 			var height = 245
 
-			var svg = d3.select("#line .wrap-content").append("svg")
+			var svg = d3.select(".line .wrap-content").append("svg")
 			var	chart = svg.append("g").classed("chart", true)
 				.attr({
 					"transform": "translate(" + x + "," + y + ")"
@@ -143,7 +227,7 @@ define(function(require, exports, module) {
 
 					data = formatData(data)
 
-					var extent = findMaxAndMin(data)
+					var extent = extentData(data)
 
 					xScale.domain(months)
 					yScale.domain(extent)
@@ -184,11 +268,12 @@ define(function(require, exports, module) {
 
 						chart_content.append("path")
 						.attr({
-							"d": line(lineDatas),
-							"stroke": colors[lineName],
+							d: line(lineDatas),
+							stroke: colors[lineName],
 							"stroke-width": 2,
-							"fill": "none",
-							"name": lineName
+							fill: "none",
+							name: lineName,
+							color: colors[lineName]
 						})
 					}
 
@@ -206,7 +291,7 @@ define(function(require, exports, module) {
 					
 
 					var legen_item = svg.append("g").classed("legen", true)
-										.selectAll()
+										.selectAll(".legen-item")
 											.data(data).enter()
 										.append("g").classed("legen-item", true)
 											.attr({
@@ -225,6 +310,9 @@ define(function(require, exports, module) {
 							height: legen_rect.height,
 							fill: function(d, i) {
 								return colors[i]
+							},
+							color: function(d, i) {
+								return colors[i]
 							}
 						})
 
@@ -234,6 +322,8 @@ define(function(require, exports, module) {
 						})
 						.attr("transform", "translate(22, 13)")
 					
+					// 交互
+					animationLine()
 				}	// end success
 			})	// end $.ajax
 
