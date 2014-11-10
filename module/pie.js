@@ -5,51 +5,51 @@ define(function(require, exports, module) {
 	// 返回格式化后的数据
 	var formatData = function(data) {
 
-		// 排序
-		var sortArr = [
-			"Discontinued", "Scheduled", "Assigned",
-			"Initiated", "Authoring", "Review",
-			"Approval", "Completed", "Call for Contributions"
-		]
+			// 排序
+			var sortArr = [
+				"Discontinued", "Scheduled", "Assigned",
+				"Initiated", "Authoring", "Review",
+				"Approval", "Completed", "Call for Contributions"
+			]
 
-		var dataset = []
-		var isAllZero = true
+			var dataset = []
+			var isAllZero = true
 
-		for (var i = 0; i < sortArr.length; i++) {
+			for (var i = 0; i < sortArr.length; i++) {
 
-			var target = sortArr[i]
-			var obj = {}
+				var target = sortArr[i]
+				var obj = {}
 
-			for (var dataPoint in data) {
+				for (var dataPoint in data) {
 
-				if (dataPoint == target) {
+					if (dataPoint == target) {
 
-					obj.key = dataPoint
-					obj.value = data[dataPoint]
+						obj.key = dataPoint
+						obj.value = data[dataPoint]
 
-					dataset.push(obj)
-					break
+						dataset.push(obj)
+						break
+					}
+
+				} // end for dataPoint in data
+
+				if (obj.value) {
+					isAllZero = false
 				}
 
-			} // end for dataPoint in data
+			} // end for sortArr
 
-			if (obj.value) {
-				isAllZero = false
+			// 如果数据均为空, 将数据都改为 1, 并提示
+			if (isAllZero) {
+				for (var i = 0; i < dataset.length; i++) {
+					dataset[i].value = 1
+				}
 			}
 
-		} // end for sortArr
+			return dataset
+		} // end format
 
-		// 如果数据均为空, 将数据都改为 1, 并提示
-		if (isAllZero) {
-			for (var i = 0; i < dataset.length; i++) {
-				dataset[i].value = 1
-			}
-		}
-
-		return dataset
-	} // end format
-
-	var drawPie = function(url) {
+	var draw = function(url) {
 
 		// pie config
 		var svg = d3.select(".pie .wrap-content").append("svg")
@@ -70,7 +70,6 @@ define(function(require, exports, module) {
 			.attr("transform", "translate(" + (x + outerRadius) + "," + (y + outerRadius) + ")")
 
 		// var legenSvg = svg.append("g").classed("legen", true)
-
 		var arc = d3.svg.arc()
 			.outerRadius(outerRadius)
 			.innerRadius(innerRadius)
@@ -107,17 +106,21 @@ define(function(require, exports, module) {
 							return d.data.key
 						},
 						color: function(d) {
-							return colors(d.data.key)
+							return COLORS(d.data.key)
 						}
 					})
 
 				g.append("path")
 					.attr({
 						d: arc,
+						opacity: 0
 					})
-					.style("fill", function(d) {
-						return colors(d.data.key)
+					.attr("fill", function(d) {
+						return COLORS(d.data.key)
 					})
+					.transition()
+					.duration(window.DURATION)
+					.attr("opacity", 1)
 
 				g.append("text")
 					.attr({
@@ -130,23 +133,55 @@ define(function(require, exports, module) {
 
 							return "translate(" + x + "," + y + ")";
 						},
+						fill: "#ffffff",
 						dy: ".35em",
+						opacity: 0
 					})
 					.style({
 						"text-anchor": "middle",
-						fill: "#ffffff",
 						"font-size": "14px"
 					})
 					.text(function(d) {
 						d.value = d.value / sum
 						return formatPercent(d.value)
 					})
+					.transition()
+					.duration(window.DURATION)
+					.attr("opacity", function(d) {
 
-				var legen_coordinate = [
-						{x: 451,y: 35}, {x: 580,y: 35}, {x: 705,y: 35},
-						{x: 451,y: 119}, {x: 580,y: 119}, {x: 705,y: 119}, 
-						{x: 451,y: 209}, {x: 580,y: 209}, {x: 705,y: 209}
-					]
+						if (!d.value) {return 0}
+
+						return 1
+					})
+
+				var legen_coordinate = [{
+					x: 451,
+					y: 35
+				}, {
+					x: 580,
+					y: 35
+				}, {
+					x: 705,
+					y: 35
+				}, {
+					x: 451,
+					y: 119
+				}, {
+					x: 580,
+					y: 119
+				}, {
+					x: 705,
+					y: 119
+				}, {
+					x: 451,
+					y: 209
+				}, {
+					x: 580,
+					y: 209
+				}, {
+					x: 705,
+					y: 209
+				}]
 
 				var legen_rect = {
 					width: 13,
@@ -154,23 +189,24 @@ define(function(require, exports, module) {
 				}
 
 				var legen_item = svg.append("g").classed("legen", true)
-						.selectAll()
-						.data(data).enter()
-						.append("g").classed("legen-item", true)
-						.attr({
-							"transform": function(d, i) {
-								var x = legen_coordinate[i].x
-								var y = legen_coordinate[i].y
+					.selectAll()
+					.data(data).enter()
+					.append("g").classed("legen-item", true)
+					.attr({
+						"transform": function(d, i) {
+							var x = legen_coordinate[i].x
+							var y = legen_coordinate[i].y
 
-								return "translate(" + x + "," + y + ")"
-							},
-							name: function(d) {
-								return d.key
-							},
-							color: function(d) {
-								return colors(d.key)
-							}
-						})
+							return "translate(" + x + "," + y + ")"
+						},
+						name: function(d) {
+							return d.key
+						},
+						color: function(d) {
+							return COLORS(d.key)
+						},
+					})
+
 
 				legen_item
 					.append("rect")
@@ -178,159 +214,185 @@ define(function(require, exports, module) {
 						width: legen_rect.width,
 						height: legen_rect.height,
 						fill: function(d) {
-							return colors(d.key)
-						}
-						
+							return COLORS(d.key)
+						},
+						opacity: 0
 					})
+					.transition()
+					.duration(window.DURATION)
+					.attr("opacity", 1)
 
 				legen_item.append("text")
 					.text(function(d) {
 						return d.key
 					})
-					.attr("transform", "translate(22, 13)")
+					.attr({
+						transform: "translate(22, 13)",
+						opacity: 0
+					})
+					.transition()
+					.duration(window.DURATION)
+					.attr("opacity", 1)
 
 				legen_item.append("text")
 					.text(function(d, i) {
 						return d.value
 					})
 					.attr({
-						"transform": "translate(28,43)",
+						transform: "translate(28,43)",
+						opacity: 0
 					})
 					.style({
 						"font-size": "18px"
 					})
+					.transition()
+					.duration(window.DURATION)
+					.attr("opacity", 1)
 
 				// Pie图的交互效果
-				animationPie()
-				
-
+				// animation()
 
 			} // end success
 		}) // end $.ajax
 	}
 
-
-	var animationPie = function() {
-		
-		var isColor = true
-
-		// 点击图例
-		touch.on(".pie svg .legen-item rect, .pie svg .legen-item text", "tap", function (ev) {
-
-			var index = $(this).parent().index()
-			
-			pathAnimation(index)
-			legenAnimation(index)
-
-			isColor = false
-
-			// 阻止事件冒泡
-			ev.stopPropagation()
-
+	var clean = function () {
+		$(".pie .wrap-content").html(function () {
+			return ""
 		})
-
-		// 点击环形图
-		touch.on(".pie .pieSvg .arc path, .pie .pieSvg .arc text", "tap", function (ev) {
-
-			var index = $(this).parent().index()
-
-			pathAnimation(index)
-			legenAnimation(index)
-
-			isColor = false
-
-			// 阻止事件冒泡
-			ev.stopPropagation()
-		})
-
-		touch.on(".pie svg", "tap", function (ev) {
-
-			if (!isColor) {
-				recolorAnimation()	
-				isColor = true
-			}
-
-			ev.stopPropagation()
-		})
-	}  // animationPie()
-
-	var legenAnimation = function (index) {
-
-		var index = index || 0
-
-		$this = $(".pie svg .legen-item").eq(index)
-		$siblings = $this.siblings()
-
-		var color = $this.attr("color")
-
-		// 选择节点上色
-		$this.find("rect").css("fill", color)
-		$this.find("text").css("fill", "#ffffff")
-
-		// 兄弟节点黑白
-		$siblings.find("rect").css("fill", "#333")
-		$siblings.find("text").css("fill", "#333")
-	}
-
-	var pathAnimation = function (index) {
-
-		var index = index || 0
-
-		$this = $(".pie .pieSvg .arc").eq(index)
-		$siblings = $this.siblings()	
-
-		var color = $this.attr("color")
-
-		$this.find("path").css("fill", color)
-		$this.find("text").css("fill", "#ffffff")
-
-		$siblings.find("path").css("fill", "#333")
-		$siblings.find("text").css("fill", "#333")
-	}
-
-	var recolorAnimation = function () {
-
-		$path = $(".pie .pieSvg .arc")
-		$legen = $(".pie svg .legen-item")
-
-		for (var i = 0; i < $legen.size(); i++) {
-			
-			var color = window.colors(i)
-
-			$path.eq(i).find("path").css("fill", color)
-			$path.eq(i).find("text").css("fill", "#ffffff")
-
-			$legen.eq(i).find("rect").css("fill", color)
-			$legen.eq(i).find("text").css("fill", "#ffffff")
-
-		}
-
 	}
 
 	module.exports = {
-		createPie: function(type, name, year, employeeName) {
 
-			if(!type) {
+		create: function(type, name, year, employeeName) {
+
+			if (!type) {
 				console.error("加载Pie图失败。需要输入Pie图的类型: administrator | manager")
 			}
-				
-			var name = name || "/all" 	// 部门名称
-			var year = year || "/2014"	// 年份 默认应该为最新一年
+
+			var name = name || "/all" // 部门名称
+			var year = year || "/2014" // 年份 默认应该为最新一年
 			var employeeName = employeeName
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 
-			if(type == "administrator") {
-				url = BASE_URL + "/admin/departmentYear"+ name + year 
-			} else if(type == "manager") {
+			if (type == "administrator") {
+				url = BASE_URL + "/admin/departmentYear" + name + year
+			} else if (type == "manager") {
 				url = BASE_URL + "/employer/employees" + name + year + employeeName
 			}
 
-			// 加载数据
-			drawPie(url)
+			clean()
+			draw(url)
 
-			
+
 		},
+		legenAnimation: function(index) {
+
+			var index = index || 0
+
+			var point = d3.select(".pie .legen")
+				.selectAll(".legen-item")
+				.filter(function(d, i) {
+					return i == index
+				})
+
+			var siblings = d3.select(".pie .legen")
+				.selectAll(".legen-item")
+				.filter(function(d, i) {
+					return i != index
+				})
+
+			var color = point.attr("color")
+
+			// 选择节点上色
+			point.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", color)
+
+			point.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.style("fill", "#ffffff")
+
+			// 兄弟节点黑白
+			siblings.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#333")
+
+			siblings.selectAll("text")
+				.transition()
+				.duration(window.DURATION)
+				.style("fill", "#333")
+		},
+		pathAnimation: function(index) {
+
+			var index = index || 0
+
+			var point = d3.select(".pie .pieSvg")
+				.selectAll(".arc").filter(function(d, i) {
+					return i == index
+				})
+
+
+			var siblings = d3.select(".pie .pieSvg")
+				.selectAll(".arc").filter(function(d, i) {
+					return i != index
+				})
+
+			var color = point.attr("color")
+
+			point.select("path")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", color)
+
+			point.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#ffffff")
+
+			siblings.select("path")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#333")
+
+			siblings.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#333")
+		},
+		recolorAnimation: function() {
+
+			var path = d3.selectAll(".pie .pieSvg .arc")
+			var legen = d3.selectAll(".pie .legen .legen-item")
+
+			path.select("path")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", function(d, j) {
+					return COLORS(j)
+				})
+
+			path.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#ffffff")
+
+			legen.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", function(d, j) {
+					return COLORS(j)
+				})
+
+			legen.selectAll("text")
+				.transition()
+				.duration(window.DURATION)
+				.style("fill", "#ffffff")
+		}
 
 	} // end exports
 
