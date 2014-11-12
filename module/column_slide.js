@@ -2,9 +2,36 @@ define(function(require, exports, module) {
 
 	var others = require("./others.js")
 
+	// 分组柱图 颜色映射
+	var COLORS = d3.scale.ordinal()
+		.range(["#ed514d", "#85d678"])
+
 	var formatData = function(data) {
+
+		var array = []
+
+		for (item in data) {
+
+
+			var obj = {}
+
+			obj.name = item
+
+			obj.notComplete = data[item].Discontinued
+
+			obj.complete = 0
+
+			for (var key in data[item]) {
+
+				obj.complete += (key != "Discontinued") ? data[item][key] : 0
+			}
+
+			array.push(obj)
+
+		}
+
 		// formatData
-		return data
+		return array
 	}
 
 	var extentData = function(data) {
@@ -63,48 +90,16 @@ define(function(require, exports, module) {
 			ev.stopPropagation()
 		})
 
-
-		// 分组柱图，滑动事件
-		// touch.on(".column_slide svg", "swipeleft swiperight", function (ev) {
-
-		// 	console.log(ev.type)
-
-		// 	if(ev.type=="swipeleft") {
-
-		// 		d3.select(".column_slide svg .chart_content")
-		// 			.transition()
-		// 			.duration(window.DURATION)
-		// 			.attr("transform", "translate(-790, 0)")
-
-		// 	} else {
-
-		// 		d3.select(".column_slide svg .chart_content")
-		// 			.transition()
-		// 			.duration(window.DURATION)
-		// 			.attr("transform", "translate(790, 0)")
-
-		// 	}
-
-		// 	ev.stopPropagation()
-		// })
-
 	}
 
-	var darw = function(url) {
+	var darw = function(url, addLegen) {
 
-		// 添加select
-		var selectStr = ".column_slide .wrap-content"
-		others.addSelect(selectStr)
-
-		var left = 79
-		var top = 112
-
-		var width = 743
-		var height = 243
 
 		var COLORS = d3.scale.ordinal()
 			.range(["#ed514d", "#85d678"])
 
+		var width = 743
+		var height = 243
 
 		// 比例尺
 		var x0 = d3.scale.ordinal()
@@ -113,7 +108,7 @@ define(function(require, exports, module) {
 		var x1 = d3.scale.ordinal()
 
 		var y = d3.scale.linear()
-			.range([height, 10])
+			.range([height - 5, 0])
 
 		// 数轴
 		var xAxis = d3.svg.axis()
@@ -122,13 +117,7 @@ define(function(require, exports, module) {
 		var yAxis = d3.svg.axis()
 			.scale(y).orient("left").ticks(5)
 
-		var svg = d3.select(".column_slide .wrap-content").append("svg")
-
-		var chart = svg.append("g").classed("chart", true)
-			.attr("transform", "translate(" + left + "," + top + ")")
-
-		var legen = svg.append("g").classed("legen", true)
-			.attr("transform", "translate(" + 218 + "," + 36 + ")")
+		var chart = d3.select(".column_slide .wrap-content .chart")
 
 		$.ajax({
 			type: "GET",
@@ -136,43 +125,13 @@ define(function(require, exports, module) {
 			url: url,
 			success: function(data) {
 
-				console.log("加载 data:")
-				console.log(data)
-
-				console.error("现在还用示例数据：column_slide")
-
-				var data = [{
-					name: "Ailsa",
-					notComplete: 20,
-					complete: 10,
-				}, {
-					name: "Barbara",
-					notComplete: 30,
-					complete: 30,
-				}, {
-					name: "Becky",
-					notComplete: 60,
-					complete: 70,
-				}, {
-					name: "Carry",
-					notComplete: 90,
-					complete: 10,
-				}, {
-					name: "Darcy",
-					notComplete: 50,
-					complete: 50,
-				}, {
-					name: "Jenny",
-					notComplete: 20,
-					complete: 40,
-				}]
-
 				data = formatData(data)
 
 				// 将所有数据的 name属性，映射为一个数组 => [name1, name2, ... , name5]
 				var nameList = data.map(function(d) {
 					return d.name
 				})
+
 				var extent = extentData(data)
 
 				// 筛选 data 的 key => ["complete", "notComplete"]
@@ -203,17 +162,10 @@ define(function(require, exports, module) {
 					.classed("y axis", true)
 					.call(yAxis)
 
-				// 添加背景
-				//   d3.selectAll(".chart .y .tick line").attr({
-				// 	x2: width,
-				// 	y2: 0,
-				// })
-				// d3.selectAll(".chart .x .tick line").attr({
-				// 	x2: 0,
-				// 	y2: -height,
-				// })
+				var chart_no_class = "no_" + window.CHART_NO
 
 				var chart_content = chart.append("g").classed("chart_content", true)
+					.classed(chart_no_class, true)
 
 				var employeeName = chart_content.selectAll(".employeeName")
 					.data(data)
@@ -252,82 +204,241 @@ define(function(require, exports, module) {
 					.duration(window.DURATION)
 					.attr({
 						y: function(d) {
-							return height - y(d.value)
-						},
-						height: function(d) {
 							return y(d.value)
 						},
-					})
-
-
-				legen.selectAll("g")
-					.data(staticInformation).enter()
-					.append("g").classed("legen-item", true)
-					.attr({
-						transform: function(d, i) {
-							return "translate(" + (i * 100) + "," + 0 + ")"
+						height: function(d) {
+							return height - y(d.value)
 						},
-						color: function(d) {
-							return COLORS(d)
-						}
 					})
 
-
-				legen.selectAll("g")
-					.append("rect")
+				employeeName.selectAll("text")
+					.data(function(d) {
+						return d.value
+					}).enter()
+					.append("text").classed("tips", true)
 					.attr({
-						fill: function(d) {
-							return COLORS(d)
+						x: function(d) {
+							return x1(d.key) + x1.rangeBand() / 2
 						},
-						width: window.legen_rect.width,
-						height: window.legen_rect.height,
-						opacity: 0
+						y: function(d) {
+							return y(d.value) - 5 // 5 为偏移量
+						},
+						"text-anchor": "middle",
+						fill: "#ffffff"
 					})
-					.transition()
-					.duration(window.DURATION)
-					.attr("opacity", 1)
+					.text(function(d, i) {
+						return d.value
+					})
 
-				legen.selectAll("g")
+				employeeName
 					.append("text")
-					.attr({
-						x: window.legen_rect.width + 5,
-						y: window.legen_rect.height,
-						dy: "-.25em",
-						opacity: 0
-					})
-					.style("text-anchor", "star")
 					.text(function(d) {
-						return d
+						return d.name
 					})
-					.transition()
-					.duration(window.DURATION)
-					.attr("opacity", 1)
+					.attr({
+						"text-anchor": "middle",
+						x: function(d) {
+							return x0.rangeBand(d.name) / 2
+						},
+						y: height,
+						dy: "1.3em",
+						fill: "#ffffff"
+					})
 
-				animation()
+
+
+				// animation()
 
 			} // end success()
 		}) // end $.ajax()
+
+		if (addLegen) {
+			addLegen()
+		}
+
+	}
+
+	var addLegen = function(url) {
+
+		console.log("addLegen")
+
+		var legen = d3.select(".column_slide .wrap-content svg")
+			.append("g").classed("legen", true)
+			.attr("transform", "translate(" + 218 + "," + 36 + ")")
+
+		legen.selectAll("g")
+			.data(["notComplete", "complete"]).enter()
+			.append("g").classed("legen-item", true)
+			.attr({
+				transform: function(d, i) {
+					return "translate(" + (i * 100) + "," + 0 + ")"
+				},
+				color: function(d) {
+					return COLORS(d)
+				}
+			})
+
+		legen.selectAll("g")
+			.append("rect")
+			.attr({
+				fill: function(d) {
+					return COLORS(d)
+				},
+				width: window.legen_rect.width,
+				height: window.legen_rect.height,
+				opacity: 0
+			})
+			.transition()
+			.duration(window.DURATION)
+			.attr("opacity", 1)
+
+		legen.selectAll("g")
+			.append("text")
+			.attr({
+				x: window.legen_rect.width + 5,
+				y: window.legen_rect.height,
+				dy: "-.25em",
+				opacity: 0
+			})
+			.style("text-anchor", "star")
+			.text(function(d) {
+				return d
+			})
+			.transition()
+			.duration(window.DURATION)
+			.attr("opacity", 1)
 	}
 
 	var clean = function() {
 		$(".column_slide .wrap-content").html("")
 	}
 
+	var loadData = function(url, callback) {
+
+		/*
+		*	加载员工姓名列表
+			把 员工姓名 作为参数请求数据
+		*/
+		var BUFF_LENGTH = 5
+
+		$.ajax({
+			type: "GET",
+			dataType: "jsonp",
+			url: url,
+			success: function(nameList) {
+
+				console.log("部门员工 List:", nameList)
+
+				for (var i = 0; i < BUFF_LENGTH; i++) {
+
+					var name = "/" + nameList[BUFF_LENGTH]
+
+					var url = BASE_URL + "/employer/employees" + DEPARTMENTNAME + YEAR + name
+
+					$.ajax({
+						type: "GET",
+						dataType: "jsonp",
+						url: url,
+						success: function(data) {
+
+							console.log("%s data:", name)
+							console.log(data)
+							console.log("\n")
+
+						}
+
+					}) // end $.ajax()
+
+				}
+
+
+
+			} // end success
+
+		}) // end $.ajax
+	}
+
+
+
 	module.exports = {
 
 		create: function(departmentName, year, employeeName) {
 
+			// 添加 years select
+			others.addYearsSelect("manager", ".column_slide .wrap-content", departmentName)
+
+			// 清空图表区域
+			clean()
+
+			var left = 79
+			var top = 112
+
+			var width = 743
+			var height = 243
+
+			// 比例尺
+			var x0 = d3.scale.ordinal()
+				.rangeRoundBands([0, width], .5);
+
+			var x1 = d3.scale.ordinal()
+
+			var y = d3.scale.linear()
+				.range([height - 5, 0])
+
+
+
+			var svg = d3.select(".column_slide .wrap-content").append("svg")
+
+			var chart = svg.append("g").classed("chart", true)
+				.attr("transform", "translate(" + left + "," + top + ")")
+
+			this.addChart()
+
+
+		}, // end create()
+		addChart: function(departmentName, year, employeeName) {
+
 			var departmentName = departmentName || "/cmc"
 			var year = year || "/2014"
-			var employeeName = employeeName || "/AMERsawans12"
+			var employeeName = employeeName || "/all"
 
-			var BASE_URL = "http://localhost:8080/Deliverable/service"
+			// 获取用户名列表
+			$.ajax({
+				type: "GET",
+				dataType: "jsonp",
+				url: BASE_URL + "/employer/employees" + departmentName,
+				success: function(nameList) {
 
-			var url = BASE_URL + "/employer/employees" + departmentName + year + employeeName
+					var nameArr = [] // 当前页数据
+					var NAME_COUNT = 6 // 当前加载数据量
 
-			clean()
-			darw(url)
-		}, // end create()
+					for (var i = NAME_LIST_POINT; i < NAME_COUNT; i++) {
+
+						if (!nameList[i]) {
+
+							NAME_COUNT++
+							continue
+
+						} else {
+
+							nameArr.push(nameList[i])
+							NAME_LIST_POINT++
+
+						}
+
+					} // end 
+
+					nameArr = "/" + nameArr.toString()
+
+					// 绘制图表的 url
+					var url = BASE_URL + "/employer/employees" + departmentName + year + nameArr
+
+					darw(url)
+				}
+			}) // end $.ajax()
+
+			addLegen()
+		},
 		legenAnimation: function(index) {
 
 			var index = index || 0
@@ -384,7 +495,8 @@ define(function(require, exports, module) {
 				.transition()
 				.duration(window.DURATION)
 				.attr("fill", "#333")
-		},	// end legenAnimation()
+
+		}, // end legenAnimation()
 
 		rectAnimation: function(index) {
 
@@ -416,7 +528,7 @@ define(function(require, exports, module) {
 				.attr({
 					fill: "#333"
 				})
-		},	// end rectAnimation()
+		}, // end rectAnimation()
 
 		recolorAnimation: function() {
 
@@ -442,7 +554,7 @@ define(function(require, exports, module) {
 				.attr("fill", function(d, i) {
 					return COLORS(d.key)
 				})
-		},	// end recolorAnimation()
+		}, // end recolorAnimation()
 
-	}	// end module.exports
+	} // end module.exports
 })

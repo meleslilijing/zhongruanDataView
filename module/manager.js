@@ -3,8 +3,10 @@ define(function(require, exports, module) {
 	var others = require("./others.js")
 
 	// 默认加载
+	window.BASE_URL = "http://localhost:8080/Deliverable/service"
+
 	window.USERTYPE = "manager" // "administrator", "manager"
-	window.DEPARTMENTNAME = "/all" // 部门名称
+	window.DEPARTMENTNAME = "/cmc" // 部门名称
 	window.YEAR = "/2014" // 年份
 	window.USER_NAME = "/all" // 用户名称
 
@@ -16,6 +18,9 @@ define(function(require, exports, module) {
 			"#ffd967", "#ffde95", "#85d678"
 		])
 
+	window.NAME_LIST_POINT = 0
+	window.CHART_NO = 0
+
 	// 图例 标签属性
 	window.legen_rect = {
 		"width": 13,
@@ -24,25 +29,24 @@ define(function(require, exports, module) {
 
 	window.DURATION = 1000 // 动画持续时间
 
+	// 添加部门员工列表
+	others.addMenu('manager', DEPARTMENTNAME)
+
 	touch.on(".table-box", "tap hold drag swif", function(ev) {
 		ev.stopPropagation()
 	})
 
 
-	// 添加部门员工列表
-	others.addMenu('manager', 'cmc')
+	require.async(["./pie.js", "./column_slide.js", "./table.js", "./animation.js"], function(pie, column_slide, table, animation) {
 
-	require.async("./pie.js", function(pie) {
 		pie.create(USERTYPE, DEPARTMENTNAME, YEAR, USER_NAME)
-	})
 
-	require.async("./column_slide.js", function(column_slide) {
 		column_slide.create(DEPARTMENTNAME, YEAR, USER_NAME)
-	})
 
-	require.async("./deliverable.js", function(deliverable) {
-		deliverable.init()
-	})
+		// table.create()
 
+		animation.manager()
+
+	})
 
 })

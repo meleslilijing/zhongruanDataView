@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 	}
 
 	window.DURATION = 1000 // 动画持续时间
+	
 
 	// 添加所有 员工列表
 	others.addMenu('administrator')
@@ -31,72 +32,15 @@ define(function(require, exports, module) {
 	})
 
 
-
-	require.async(["./pie.js", "./line.js", "./deliverable.js"], function(pie, line, deliverable) {
+	require.async(["./pie.js", "./line.js", "./table.js", "./animation.js"], function(pie, line, table, animation) {
 
 		pie.create(USERTYPE, DEPARTMENTNAME, YEAR)
+
 		line.create(DEPARTMENTNAME, YEAR)
-		deliverable.init()
 
-		var animation = function() {
-			
-			var isColor = true
+		table.create()
 
-			// 点击 pie 图例
-			touch.on(".pie", "tap", ".legen-item rect, .legen-item text, .arc path, .arc text", function(ev) {
-
-				console.log("--------")
-
-				var index = $(this).parent().index()
-
-				pie.pathAnimation(index)
-				pie.legenAnimation(index)
-				line.lengenAnimation(index)
-				line.pathAnimation(index)
-
-				isColor = false
-
-				ev.stopPropagation()
-
-			})
-
-			// 点击 line 图例
-			touch.on(".line", "tap", ".legen-item rect, .legen-item text", function(ev) {
-
-				var index = $(this).parent().index()
-
-				pie.pathAnimation(index)
-				pie.legenAnimation(index)
-				line.lengenAnimation(index)
-				line.pathAnimation(index)
-
-				isColor = false
-
-				ev.stopPropagation()
-			})
-
-			// recolor
-			touch.on(".pie svg", "tap", function(ev) {
-
-				if (!isColor) {
-					pie.recolorAnimation()
-					line.recolorAnimation()
-					isColor = true
-				}
-
-			})
-
-			touch.on(".line svg", "tap", function(ev) {
-
-				if (!isColor) {
-					pie.recolorAnimation()
-					line.recolorAnimation()
-					isColor = true
-				}
-
-			})
-
-		}()
+		animation.administrator()
 
 	})
 
@@ -106,8 +50,8 @@ define(function(require, exports, module) {
 	// 	line.create(DEPARTMENTNAME, YEAR)
 	// })
 
-	// require.async("./deliverable.js", function(deliverable) {
-	// 	deliverable.init()
+	// require.async("./table.js", function(table) {
+	// 	table.init()
 	// })
 
 

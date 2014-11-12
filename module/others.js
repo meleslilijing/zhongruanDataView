@@ -1,56 +1,78 @@
 define(function(require, exports, module) {
 
 
-
-	! function() {
-
-		// 阻止底部表格事件冒泡
-		touch.on(".table-box", "drag swipe hold", function(ev) {
-			ev.stopPropagation()
-		})
-
-	}()
-
 	var altMenu = function() {
 
-		var mode_1, mode_2, mode_3
+		var mode_1, mode_2, mode_3, mode_4
 
 		if (window.USERTYPE == "administrator") {
 
-			seajs.use(["./module/pie.js", "./module/line.js", "./module/deliverable.js"], function(pie_mod, line_mod, deliverable_mod) {
-				mode_1 = pie_mod
-				mode_2 = line_mod
-				mode_3 = deliverable_mod
-			})
+			seajs.use(
+
+				["./module/pie.js", "./module/line.js", "./module/table.js", "./module/animation.js"],
+
+				function(pie_mod, line_mod, table_mod, animation) {
+
+					mode_1 = pie_mod
+					mode_2 = line_mod
+					mode_3 = table_mod
+					mode_4 = animation
+				})
 
 		} else if (window.USERTYPE == "manager") {
 
-			seajs.use(["./module/pie.js", "./module/column.js", "./module/deliverable.js"], function(pie_mod, column_mod, deliverable_mod) {
-				mode_1 = pie_mod
-				mode_2 = column_mod
-				mode_3 = deliverable_mod
-			})
+			seajs.use(
+
+				["./module/pie.js", "./module/column_slide.js", "./module/table.js", "./module/animation.js"],
+
+				function(pie_mod, column_slide_mod, table_mod, animation) {
+
+					mode_1 = pie_mod
+					mode_2 = column_slide_mod
+					mode_3 = table_mod
+					mode_4 = animation
+				})
 		}
+
+		// var animation = require("./animation.js")
 
 		touch.on(".menu-list", "tap", function(ev) {
 
 			$(".menu-list .selected").removeClass("selected")
 			$(this).addClass("selected")
 
-			// // 更改全局变量
-			window.DEPARTMENTNAME = "/" + $(this).text()
-			console.log("DEPARTMENTNAME:", DEPARTMENTNAME)
+			if (window.USERTYPE == "administrator") {
 
-			// // 重绘图表
-			mode_1.create(USERTYPE, DEPARTMENTNAME, YEAR)
-			mode_2.create(DEPARTMENTNAME, YEAR)
-			mode_3.init()
+				// 更改全局变量				
+				window.DEPARTMENTNAME = "/" + $(this).text()
+
+				// 重新绘制图表
+				mode_1.create(USERTYPE, DEPARTMENTNAME, YEAR)
+				mode_2.create(DEPARTMENTNAME, YEAR)
+				mode_3.init()
+
+				// 重新绑定 animation 事件
+				mode_4.administrator()
+
+
+
+			} else if (window.USERTYPE == "manager") {
+
+				window.USER_NAME = "/" + $(this).text()
+
+				mode_1.create(USERTYPE, DEPARTMENTNAME, YEAR, USER_NAME)
+				mode_2.create(DEPARTMENTNAME, YEAR, USER_NAME)
+				mode_3.init()
+
+				// animation
+				mode_4.manager()
+
+			}
 
 			ev.stopPropagation()
 
 		})
 
-		// 阻止侧边栏的事件冒泡
 		touch.on(".menu-list", "drag swipe hold", function(ev) {
 			ev.stopPropagation()
 		})
@@ -59,26 +81,60 @@ define(function(require, exports, module) {
 	module.exports = {
 
 		// 为折线图 和 slide分组柱图 添加用于选择年份的select标签
-		addSelect: function(selector) {
+		addYearsSelect: function(type, selector, departmentName) {
 
-			var select = ""
-			var option = ""
+			var BASE_URL = "http://localhost:8080/Deliverable/service"
+			var url
 
-			years = require("../data/years.js")
+			var departmentName = departmentName || "/cmc"
 
-			for (var i = 0; i < years.length; i++) {
+			if (type == "administrator") {
 
-				var year = years[i]
+				url = BASE_URL + "/admin/departmentYear" + departmentName	
 
-				if (i == years.length - 1) {
-					option += "<option selected='selected' value = " + year + ">" + year + "</option>"
-				} else {
-					option += "<option value = " + year + ">" + year + "</option>"
-				}
+			} else if (type == "manager") {
+
+				url = BASE_URL + "/employer/departmentYear" + departmentName
 			}
-			select = "<select>" + option + "</select>"
 
-			$(selector).append(select)
+			$.ajax({
+				type: "GET",
+				dataType: "jsonp",
+				url: url,
+				success: function (data) {
+
+					if (data) {
+
+						// 将 data 中的数据筛选为数组， 并排序
+						years = data.map(function (d) { return d.year }).sort()	
+
+					} else {
+
+						console.error("没有年份数据。")
+						
+					}
+
+					var select = ""
+					var option = ""
+
+					for (var i = 0; i < years.length; i++) {
+
+						var year = years[i]
+
+						if (i == years.length - 1) {
+							option += "<option selected='selected' value = " + year + ">" + year + "</option>"
+						} else {
+							option += "<option value = " + year + ">" + year + "</option>"
+						}
+					}
+
+					select = "<select>" + option + "</select>"
+
+					$(selector).append(select)
+				}
+			})
+
+
 		},
 
 		// 加载左侧列表
@@ -94,7 +150,7 @@ define(function(require, exports, module) {
 				}
 
 				// 某个部门的员工列表
-				var INTERMEDIATE = "/employer/employees/" + departmentName
+				var INTERMEDIATE = "/employer/employees" + departmentName
 
 			} else if (type == 'administrator') {
 

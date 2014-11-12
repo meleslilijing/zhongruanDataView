@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
 
-	
-	
+
+
 	// 格式化数据： 
 	// 		如果data的所有值均为0，生成随机数据
 	//		将data的属性按照顺序排序
@@ -35,8 +35,6 @@ define(function(require, exports, module) {
 						obj.key = item
 						obj.value = data[item]
 
-						console.log(typeof obj.value)
-
 						dataset.push(obj)
 					}
 
@@ -49,7 +47,7 @@ define(function(require, exports, module) {
 
 				var sum = 0
 
-				for( var i = 0; i < dataset[item].length; i++) {
+				for (var i = 0; i < dataset[item].length; i++) {
 					sum += dataset[item]
 				}
 
@@ -69,8 +67,6 @@ define(function(require, exports, module) {
 			// 生成随机数据
 			if (isAllNum) {
 
-				console.log("column_slide 所有数据为0.  生成随机数据...")
-
 				for (var i = 0; i < dataset.length; i++) {
 					dataset[i].value = parseInt(Math.random() * RANDOM_RANGE)
 				}
@@ -78,7 +74,7 @@ define(function(require, exports, module) {
 			}
 
 			return dataset
-	} // end formatData()
+		} // end formatData()
 
 	// 找出 data 的 domain
 	var extentData = function(data) {
@@ -91,147 +87,11 @@ define(function(require, exports, module) {
 			min = Math.min(data[i].value, min)
 
 		}
-		
 		return [min, max]
 	}
 
-	var animation = function () {
 
-		var isColor = true
-
-		touch.on(".column .legen-item text, .column .legen-item rect", "tap", function (ev) {
-			
-			var index = $(this).parent().index()
-
-			lengenAnimation(index)
-			pathAnimation(index)
-
-			isColor = false
-
-			ev.stopPropagation()
-
-		})
-
-		touch.on(".column .chart-content rect", "tap", function (ev) {
-			
-			var index = $(this).index()
-			
-			lengenAnimation(index)
-			pathAnimation(index)
-
-			isColor = false
-
-			ev.stopPropagation()
-
-		})
-
-		touch.on(".column svg", "tap", function (ev) {
-			
-			if (!isColor) {
-
-				recolorAnimation()	
-				
-				isColor = true
-
-			}
-
-			ev.stopPropagation()
-
-		})
-	}
-
-	var lengenAnimation = function (index) {
-		
-		var index = index || 0
-
-		// $this = $(".column .legen-item").eq(index)
-		// $siblings = $this.siblings()
-
-		// var color = $this.attr("color")
-
-		// // 选择节点上色
-		// $this.find("rect").css("fill", color)
-		// $this.find("text").css("fill", "#ffffff")
-
-		// // 兄弟节点黑白
-		// $siblings.find("rect").css("fill", "#333")
-		// $siblings.find("text").css("fill", "#333")
-
-		var point = d3.selectAll(".column .legen-item").filter(function (d, i) {
-					return i == index
-				})
-
-		var siblings = d3.selectAll(".column .legen-item").filter(function (d, i) {
-					return i != index
-				})
-
-		var color = point.attr("color")
-
-		point.select("rect")
-			.transition()
-			.duration(window.DURATION)
-			.attr("fill", color)
-
-		point.select("text")
-			.transition()
-			.duration(window.DURATION)
-			.style("fill", "#ffffff")
-
-		siblings.select("rect")
-			.transition()
-			.duration(window.DURATION)
-			.attr("fill", "#333")
-
-		siblings.select("text")
-			.transition()
-			.duration(window.DURATION)
-			.style("fill", "#333")
-	}
-
-	var pathAnimation = function (index) {
-
-		var index = index || 0
-
-		d3.selectAll(".column .chart-content rect").filter(function (d, i) {
-					return i == index
-				})
-				.transition()
-				.duration(window.DURATION)
-				.attr("fill", function (d) {
-					return d3.select(this).attr("color")
-				})
-
-		d3.selectAll(".column .chart-content rect").filter(function (d, i) {
-					return i != index
-				})
-				.transition()
-				.duration(window.DURATION)
-				.attr("fill", "#333")
-	}
-
-	var recolorAnimation = function () {
-
-		d3.selectAll(".column .chart-content rect")
-			.transition()
-			.duration(window.DURATION)
-			.attr("fill", function (d) {
-				return COLORS(d.key)
-			})
-
-		var legen = d3.selectAll(".column .legen .legen-item")
-			.transition()
-			.duration(window.DURATION)
-
-		legen.select("rect")
-			.attr("fill", function (d) {
-				return COLORS(d.key)
-			})
-
-		legen.select("text")
-			.style("fill", "#ffffff")
-	}
-
-	var drawColumn = function(url) {
+	var draw = function(url) {
 
 			var svg = d3.select(".column .wrap-content").append("svg")
 
@@ -248,7 +108,7 @@ define(function(require, exports, module) {
 				.rangeBands([0, width], .7)
 
 			var yScale = d3.scale.linear()
-				.range([height, 10])
+				.range([height - 5, 0])
 
 			// 数轴
 			var xAxis = d3.svg.axis()
@@ -263,17 +123,11 @@ define(function(require, exports, module) {
 			$.ajax({
 				type: "GET",
 				dataType: "jsonp",
-				url:url,
+				url: url,
 				success: function(data) {
-
-					console.log("载入 data:")
-					console.log(data)
 
 					// 格式化数据
 					data = formatData(data)
-
-					console.log("格式化后 data:")
-					console.log(data)
 
 					// 示例数据
 					// var data = {
@@ -335,7 +189,7 @@ define(function(require, exports, module) {
 							fill: function(d) {
 								return COLORS(d.key)
 							},
-							color: function (d) {
+							color: function(d) {
 								return COLORS(d.key)
 							}
 						})
@@ -351,106 +205,219 @@ define(function(require, exports, module) {
 						})
 
 					// 添加标签
-					// chart.append("g")
-					// 	.classed("tips", true)
-					// 	.selectAll("text")
-					// 	.data(data).enter()
-					// 	.append("text")
-					// 	.attr({
-					// 		x: function(d) {
-					// 			return xScale(d.key)
-					// 		},
-					// 		y: function(d) {
-					// 			return yScale(d.value)
-					// 		},
-					// 		fill: "#ffffff"
-					// 	})
-					// 	// .style("text-an")
-					// 	.text(function(d) {
-					// 		return d.value
-					// 	})
+					chart.append("g")
+						.classed("tips", true)
+						.selectAll("text")
+						.data(data).enter()
+						.append("text")
+						.attr({
+							x: function(d) {
+								return xScale(d.key)
+							},
+							y: function(d) {
+								return yScale(d.value)
+							},
+							fill: "#ffffff"
+						})
+						// .style("text-an")
+						.text(function(d) {
+							return d.value
+						})
 
 
 					// 添加图例
-					var legen_coordinate = [
-												{x:17, y:20}, {x:128, y:20}, {x:235, y:20}, {x:343, y:20}, 
-												{x:17, y:52}, {x:128, y:52}, {x:235, y:52}, {x:343, y:52}, 
-												{x:17, y:83}
-											]
+					var legen_coordinate = [{
+						x: 17,
+						y: 20
+					}, {
+						x: 128,
+						y: 20
+					}, {
+						x: 235,
+						y: 20
+					}, {
+						x: 343,
+						y: 20
+					}, {
+						x: 17,
+						y: 52
+					}, {
+						x: 128,
+						y: 52
+					}, {
+						x: 235,
+						y: 52
+					}, {
+						x: 343,
+						y: 52
+					}, {
+						x: 17,
+						y: 83
+					}]
 
 					// 图例 标签属性
 					var legen_rect = {
-						"width":13, 
-						"height":13, 
+						"width": 13,
+						"height": 13,
 					}
 
 					var legen_item = svg.append("g").classed("legen", true)
-											.selectAll()
-												.data(data).enter()
-											.append("g").classed("legen-item", true)
-												.attr({
-													"transform": function(d, i) {
-														var x = legen_coordinate[i].x
-														var y = legen_coordinate[i].y
+						.selectAll()
+						.data(data).enter()
+						.append("g").classed("legen-item", true)
+						.attr({
+							"transform": function(d, i) {
+								var x = legen_coordinate[i].x
+								var y = legen_coordinate[i].y
 
-														return "translate("+x+","+y+")"
-													},
-													name: function(d) { return d },
-													color: function (d, i) {
-														return COLORS(d.key)
-													},
-												})
-												
+								return "translate(" + x + "," + y + ")"
+							},
+							name: function(d) {
+								return d
+							},
+							color: function(d, i) {
+								return COLORS(d.key)
+							},
+						})
+
 					legen_item.append("rect")
-							.attr({
-								width: legen_rect.width,
-								height: legen_rect.height,
-								fill: function(d, i) {
-									return COLORS(d.key)
-								},
-								
-								opacity: 0
-							})
-							.transition()
-							.duration(window.DURATION)
-							.attr({
-								opacity: 1
-							})
+						.attr({
+							width: legen_rect.width,
+							height: legen_rect.height,
+							fill: function(d, i) {
+								return COLORS(d.key)
+							},
+
+							opacity: 0
+						})
+						.transition()
+						.duration(window.DURATION)
+						.attr({
+							opacity: 1
+						})
 
 					legen_item.append("text")
-							.text(function(d) {
-								return d.key
-							})
-							.attr({
-								transform: "translate(22, 13)",
-								opacity: 0,
-							})
-							.transition()
-							.duration(window.DURATION)
-							.attr({
-								opacity: 1
-							})
+						.text(function(d) {
+							return d.key
+						})
+						.attr({
+							transform: "translate(22, 13)",
+							opacity: 0,
+						})
+						.transition()
+						.duration(window.DURATION)
+						.attr({
+							opacity: 1
+						})
 
+				} // end success
 
-					animation()
-				}	// end success
-
-			})	// end $.ajax
-
-	}	// end init
+			}) // end $.ajax
+		} // end init
 
 	module.exports = {
-		create: function (employeeName) {
+		create: function(employeeName) {
 
 			var employeeName = employeeName || "AMERsawans12"
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 			var url = BASE_URL + "/employee/status/" + employeeName
 
-			drawColumn(url)
-		}
-	
-	}	// end modle
+			draw(url)
+		},
+
+		lengenAnimation: function(index) {
+
+			var index = index || 0
+
+			// $this = $(".column .legen-item").eq(index)
+			// $siblings = $this.siblings()
+
+			// var color = $this.attr("color")
+
+			// // 选择节点上色
+			// $this.find("rect").css("fill", color)
+			// $this.find("text").css("fill", "#ffffff")
+
+			// // 兄弟节点黑白
+			// $siblings.find("rect").css("fill", "#333")
+			// $siblings.find("text").css("fill", "#333")
+
+			var point = d3.selectAll(".column .legen-item").filter(function(d, i) {
+				return i == index
+			})
+
+			var siblings = d3.selectAll(".column .legen-item").filter(function(d, i) {
+				return i != index
+			})
+
+			var color = point.attr("color")
+
+			point.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", color)
+
+			point.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.style("fill", "#ffffff")
+
+			siblings.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#333")
+
+			siblings.select("text")
+				.transition()
+				.duration(window.DURATION)
+				.style("fill", "#333")
+		},
+
+		pathAnimation: function(index) {
+
+			var index = index || 0
+
+			d3.selectAll(".column .chart-content rect").filter(function(d, i) {
+				return i == index
+			})
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", function(d) {
+					return d3.select(this).attr("color")
+				})
+
+			d3.selectAll(".column .chart-content rect").filter(function(d, i) {
+				return i != index
+			})
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", "#333")
+		},
+
+		recolorAnimation: function() {
+
+			d3.selectAll(".column .chart-content rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", function(d) {
+					return COLORS(d.key)
+				})
+
+			var legen = d3.selectAll(".column .legen .legen-item")
+				.transition()
+				.duration(window.DURATION)
+
+			legen.select("rect")
+				.attr("fill", function(d) {
+					return COLORS(d.key)
+				})
+
+			legen.select("text")
+				.style("fill", "#ffffff")
+		},
+
+	} // end modle
 
 
 })

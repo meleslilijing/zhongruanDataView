@@ -264,22 +264,24 @@ define(function(require, exports, module) {
 
 	module.exports = {
 
-		create: function(type, name, year, employeeName) {
+		create: function(type, departmentName, year, employeeName) {
+
+			
 
 			if (!type) {
 				console.error("加载Pie图失败。需要输入Pie图的类型: administrator | manager")
 			}
 
-			var name = name || "/all" // 部门名称
+			var departmentName = departmentName || "/all" // 部门名称
 			var year = year || "/2014" // 年份 默认应该为最新一年
 			var employeeName = employeeName
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 
 			if (type == "administrator") {
-				url = BASE_URL + "/admin/departmentYear" + name + year
+				url = BASE_URL + "/admin/departmentYear" + departmentName + year
 			} else if (type == "manager") {
-				url = BASE_URL + "/employer/employees" + name + year + employeeName
+				url = BASE_URL + "/employer/employees" + departmentName + year + employeeName
 			}
 
 			clean()

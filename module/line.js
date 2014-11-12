@@ -79,16 +79,10 @@ define(function(require, exports, module) {
 	}
 
 	var clean = function () {
-		$(".line .wrap-content").html(function () {
-			return ""
-		})
+		$(".line .wrap-content").html("")
 	}
 
 	var draw = function(url) {
-
-			// 添加select
-			var selectStr = ".line .wrap-content"
-			others.addSelect(selectStr)
 
 			// 添加图表
 			var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -279,7 +273,7 @@ define(function(require, exports, module) {
 				} // end success
 			}) // end $.ajax
 
-		} // end draw
+	} // end draw
 
 	module.exports = {
 
@@ -287,6 +281,9 @@ define(function(require, exports, module) {
 
 			var departmentName = departmentName || "/all"
 			var year = year || "/2014"
+
+			// 添加 years select
+			others.addYearsSelect("administrator", ".line .wrap-content", departmentName)
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 

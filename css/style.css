@@ -252,7 +252,7 @@ body {
 	width: 181px;
 	height: 100%;
 }
-#deliverable .table-box,
+.mod-table .table-box,
 #employee .table-box {
 	margin-top: 27px;
 	width: 782px;
@@ -281,6 +281,9 @@ svg {
 }
 #employee .x text{
 	visibility: hidden;
+}
+.column_slide .chart .x text{
+	fill: none;
 }
 
 
