@@ -2,6 +2,9 @@ define(function(require, exports, module) {
 
 	var others = require("./others.js")
 
+	// 	是否有数轴
+	var haveAxis = false
+
 	// 分组柱图 颜色映射
 	var COLORS = d3.scale.ordinal()
 		.range(["#ed514d", "#85d678"])
@@ -52,48 +55,7 @@ define(function(require, exports, module) {
 		return [min, max]
 	}
 
-	var animation = function() {
-
-		var isColor = true
-
-		touch.on(".column_slide .legen-item rect, .column_slide .legen-item text", "tap", function(ev) {
-
-			var index = $(this).parent().index()
-
-			legenAnimation(index)
-
-			isColor = false
-
-			ev.stopPropagation()
-		})
-
-		touch.on(".column_slide .chart_content rect, .column_slide .x .tick text", "tap", function(ev) {
-
-			var index = $(this).parent().index()
-
-			rectAnimation(index)
-
-			isColor = false
-
-			ev.stopPropagation()
-		})
-
-		touch.on(".column_slide svg", "tap", function(ev) {
-
-			if (!isColor) {
-
-				recolorAnimation()
-
-				isColor = true
-			}
-
-			ev.stopPropagation()
-		})
-
-	}
-
 	var darw = function(url, addLegen) {
-
 
 		var COLORS = d3.scale.ordinal()
 			.range(["#ed514d", "#85d678"])
@@ -108,7 +70,7 @@ define(function(require, exports, module) {
 		var x1 = d3.scale.ordinal()
 
 		var y = d3.scale.linear()
-			.range([height - 5, 0])
+			.range([height , 0])
 
 		// 数轴
 		var xAxis = d3.svg.axis()
@@ -151,21 +113,28 @@ define(function(require, exports, module) {
 				x0.domain(nameList)
 				x1.domain(staticInformation)
 					.rangeRoundBands([0, x0.rangeBand()], .3)
-				y.domain(extent)
+				y.domain([0, extent[1]])
 
-				chart.append("g")
-					.classed("x axis", true)
-					.attr("transform", "translate(0," + height + ")")
-					.call(xAxis)
+				// 如果没有数轴，添加数轴
+				if (!haveAxis) {
 
-				chart.append("g")
-					.classed("y axis", true)
-					.call(yAxis)
+					haveAxis = true
+
+					chart.append("g")
+						.classed("x axis", true)
+						.attr("transform", "translate(0," + height + ")")
+						.call(xAxis)
+
+					chart.append("g")
+						.classed("y axis", true)
+						.call(yAxis)
+
+				}
 
 				var chart_no_class = "no_" + window.CHART_NO
 
 				var chart_content = chart.append("g").classed("chart_content", true)
-					.classed(chart_no_class, true)
+					.classed(chart_no_class, true).attr("x", 0)
 
 				var employeeName = chart_content.selectAll(".employeeName")
 					.data(data)
@@ -260,8 +229,6 @@ define(function(require, exports, module) {
 
 	var addLegen = function(url) {
 
-		console.log("addLegen")
-
 		var legen = d3.select(".column_slide .wrap-content svg")
 			.append("g").classed("legen", true)
 			.attr("transform", "translate(" + 218 + "," + 36 + ")")
@@ -313,53 +280,6 @@ define(function(require, exports, module) {
 		$(".column_slide .wrap-content").html("")
 	}
 
-	var loadData = function(url, callback) {
-
-		/*
-		*	加载员工姓名列表
-			把 员工姓名 作为参数请求数据
-		*/
-		var BUFF_LENGTH = 5
-
-		$.ajax({
-			type: "GET",
-			dataType: "jsonp",
-			url: url,
-			success: function(nameList) {
-
-				console.log("部门员工 List:", nameList)
-
-				for (var i = 0; i < BUFF_LENGTH; i++) {
-
-					var name = "/" + nameList[BUFF_LENGTH]
-
-					var url = BASE_URL + "/employer/employees" + DEPARTMENTNAME + YEAR + name
-
-					$.ajax({
-						type: "GET",
-						dataType: "jsonp",
-						url: url,
-						success: function(data) {
-
-							console.log("%s data:", name)
-							console.log(data)
-							console.log("\n")
-
-						}
-
-					}) // end $.ajax()
-
-				}
-
-
-
-			} // end success
-
-		}) // end $.ajax
-	}
-
-
-
 	module.exports = {
 
 		create: function(departmentName, year, employeeName) {
@@ -385,16 +305,13 @@ define(function(require, exports, module) {
 			var y = d3.scale.linear()
 				.range([height - 5, 0])
 
-
-
 			var svg = d3.select(".column_slide .wrap-content").append("svg")
 
 			var chart = svg.append("g").classed("chart", true)
 				.attr("transform", "translate(" + left + "," + top + ")")
 
-			this.addChart()
-
-
+			this.addChart(departmentName, year, employeeName)
+			addLegen()
 		}, // end create()
 		addChart: function(departmentName, year, employeeName) {
 
@@ -402,26 +319,30 @@ define(function(require, exports, module) {
 			var year = year || "/2014"
 			var employeeName = employeeName || "/all"
 
+			var url = BASE_URL + "/employer/employees" + departmentName
+
+			console.log("addChart")
+
 			// 获取用户名列表
 			$.ajax({
 				type: "GET",
 				dataType: "jsonp",
-				url: BASE_URL + "/employer/employees" + departmentName,
+				url: url,
 				success: function(nameList) {
 
 					var nameArr = [] // 当前页数据
-					var NAME_COUNT = 6 // 当前加载数据量
+					var name_count = 6 // 当前加载数据量
 
-					for (var i = NAME_LIST_POINT; i < NAME_COUNT; i++) {
+					for (var i = 0; i < name_count; i++) {
 
-						if (!nameList[i]) {
-
-							NAME_COUNT++
+						if (!nameList[i] ) {
+							NAME_LIST_POINT
+							name_count++
 							continue
 
 						} else {
 
-							nameArr.push(nameList[i])
+							nameArr.push(nameList[NAME_LIST_POINT])
 							NAME_LIST_POINT++
 
 						}
@@ -435,9 +356,8 @@ define(function(require, exports, module) {
 
 					darw(url)
 				}
-			}) // end $.ajax()
 
-			addLegen()
+			}) // end $.ajax()
 		},
 		legenAnimation: function(index) {
 

@@ -9,9 +9,9 @@ define(function(require, exports, module) {
 	// 数据与颜色间映射
 	window.COLORS = d3.scale.ordinal()
 		.range([
-			"#ed514d", "#46affe", "#ff7a38",
-			"#ff9a38", "#ffb638", "#ffcf3e",
-			"#ffd967", "#ffde95", "#85d678"
+			"#c13531", "#c95400", "#cf7f00",
+			"#e7ad00", "#c9f263", "#9bdc00",
+			"#1adfbd", "#20b476", "#e3d100"
 		])
 
 	window.SORT_ARR = [
@@ -35,11 +35,12 @@ define(function(require, exports, module) {
 	})
 
 	// employee
-	require.async(["./calendar.js", "./column.js", "./table.js"], function(calendar, column, table) {
+	require.async(["./calendar.js", "./column.js", "./table.js", "./animation.js"], function(calendar, column, table, animation) {
 
 		calendar.init()
 		column.create(USER_NAME)
 		table.create()
+		animation.employee()
 
 
 	})

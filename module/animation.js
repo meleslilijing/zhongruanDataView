@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var pie = require("./pie.js")
 	var line = require("./line.js")
 	var column_slide = require("./column_slide.js")
+	var table = require("./table.js")
 
 	module.exports = {
 
@@ -10,12 +11,13 @@ define(function(require, exports, module) {
 
 			var isColor = true
 
-			// 点击 pie 图例
+			// 点击 pie 图
 			touch.on(".pie", "tap", ".legen-item rect, .legen-item text, .arc path, .arc text", function(ev) {
 
-				console.log("pie rect")
-
 				var index = $(this).parent().index()
+
+				// 筛选表格内容
+				table.filter(SORT_ARR[index])
 
 				pie.pathAnimation(index)
 				pie.legenAnimation(index)
@@ -31,9 +33,10 @@ define(function(require, exports, module) {
 			// 点击 line 图例
 			touch.on(".line", "tap", ".legen-item rect, .legen-item text", function(ev) {
 
-				console.log("line rect")
-
 				var index = $(this).parent().index()
+
+				// 筛选表格内容
+				table.filter(SORT_ARR[index])
 
 				pie.pathAnimation(index)
 				pie.legenAnimation(index)
@@ -46,11 +49,13 @@ define(function(require, exports, module) {
 			})
 
 			// recolor
-			touch.on(".pie svg", "tap", function(ev) {
-
-				console.log("pie recolor")
+			touch.on(".pie .wrap-content", "tap", function(ev) {
 
 				if (!isColor) {
+
+					// 显示所有表格项
+					table.showAll()
+
 					pie.recolorAnimation()
 					line.recolorAnimation()
 					isColor = true
@@ -58,11 +63,13 @@ define(function(require, exports, module) {
 
 			})
 
-			touch.on(".line svg", "tap", function(ev) {
-
-				console.log("pie recolor")
+			touch.on(".line .wrap-content", "tap", function(ev) {
 
 				if (!isColor) {
+
+					// 显示所有表格项
+					table.showAll()
+
 					pie.recolorAnimation()
 					line.recolorAnimation()
 					isColor = true
@@ -70,11 +77,13 @@ define(function(require, exports, module) {
 
 			})
 
-		},
+		},	// end administrator()
 
 		manager: function() {
 
 			var isColor = true
+
+			console.log(isColor)
 
 			// 点击 pie 图例: pie 图内部交互
 			touch.on(".pie", "tap", ".legen-item rect, .legen-item text, .arc path, .arc text", function(ev) {
@@ -83,10 +92,15 @@ define(function(require, exports, module) {
 
 				var index = $(this).parent().index()
 
+				// 筛选表格内容
+				table.filter(SORT_ARR[index])
+
 				pie.pathAnimation(index)
 				pie.legenAnimation(index)
 
 				isColor = false
+
+				console.log(isColor)
 
 				ev.stopPropagation()
 
@@ -99,9 +113,14 @@ define(function(require, exports, module) {
 
 				var index = $(this).parent().index()
 
+				// 筛选表格内容
+				table.filter(SORT_ARR[index])
+
 				column_slide.legenAnimation(index)
 
 				isColor = false
+
+				console.log(isColor)
 
 				ev.stopPropagation()
 			})
@@ -119,6 +138,8 @@ define(function(require, exports, module) {
 
 				isColor = false
 
+				console.log(isColor)
+
 				ev.stopPropagation()
 			})
 
@@ -129,9 +150,15 @@ define(function(require, exports, module) {
 
 				if (!isColor) {
 
+					// 显示所有表格项
+					table.showAll()
+
 					pie.recolorAnimation()
 
 					isColor = true
+
+					console.log(isColor)
+
 
 				}
 
@@ -143,10 +170,16 @@ define(function(require, exports, module) {
 
 				if (!isColor) {
 
+					// 显示所有表格项
+					table.showAll()
+
 					pie.recolorAnimation()
 					column_slide.recolorAnimation()
 
 					isColor = true
+
+					console.log(isColor)
+
 				}
 
 			})
@@ -154,65 +187,86 @@ define(function(require, exports, module) {
 			/*
 				以下是分组柱图的轮播效果
 			*/
-			var column_slide = require("./column_slide.js")
+			! function() {
 
-			var addColumnSlide = function() {
+				var column_slide = require("./column_slide.js")
 
-				++CHART_NO
+				var addColumnSlide = function() {
 
-				column_slide.addChart()
-			}
+					++CHART_NO
 
-			var x = 0
-
-			var point = 0 // 当前显示页数
-			var range = [0, 5] // 一次显示 5 页
-
-			var width = d3.select(".column_slide .wrap-content").style("width")
-
-			var step = parseInt(width) // 滚动步长
-
-			touch.on(".column_slide .wrap-content", "swipeleft swiperight", function(ev) {
-
-				/*
-					现在有个问题： swipe 可能在一次滑动被触发多次
-				*/
-				var chart = d3.select(".column_slide svg .chart_content")
-
-				if (ev.type == "swipeleft") {
-
-					if (point < range[1] - 1) {
-
-						point++
-
-						// 返回新创建的 分组柱图 
-						addColumnSlide()
-
-						x -= step
-
-						chart.transition().duration(window.DURATION).attr("transform", "translate(" + x + ", 0)")
-					}
-
-				} else {
-
-					if (point > range[0]) {
-
-						point--
-
-
-
-						x += step
-
-						chart.transition().duration(window.DURATION).attr("transform", "translate(" + x + ", 0)")
-					}
+					column_slide.addChart()
 				}
 
-				console.log("point:", point)
+				var page = 0 // 当前显示页数
+				var range = [0, 5] // 一次显示 5 页
+
+				var width = d3.select(".column_slide .wrap-content").style("width")
+
+				var step = parseInt(width) // 滚动步长
+
+				touch.on(".column_slide .wrap-content", "swipeleft swiperight", function(ev) {
+
+					/*
+					现在有个问题： swipe 可能在一次滑动被触发多次
+				*/
+					var chart = d3.selectAll(".column_slide svg .chart_content")
+
+					var x = chart.attr("X")
+
+					if (ev.type == "swipeleft") {
+
+						// if (page < range[1] - 1) {
+
+						// 	page++
+
+						// 	// 返回新创建的 分组柱图 
+						// 	addColumnSlide()
+						// 	console.log("当前计数器：", CHART_NO)
+
+						// 	x -= step
+
+						// 	chart.transition().duration(window.DURATION)
+						// 		.attr("x", x)
+						// 		.attr("transform", "translate(" + x + ", 0)")
+						// }
+
+					} else {
+
+						// if (page > range[0]) {
+
+						// 	page--
+
+						// 	x += step
+
+						// 	chart.transition().duration(window.DURATION)
+						// 		.attr("x", x)
+						// 		.attr("transform", "translate(" + x + ", 0)")
+						// }
+					}
+
+				})	// end touch.on
+
+
+			} // end !function()
+		}, // end manager()
+
+		employee: function () {
+
+			touch.on(".mod-table", "tap", "tr", function (ev) {
+				
+				// var $this = $(this).parent()
+
+				// var $siblings = $this.siblings().removeClass("selected")
+
+				// $(this).parent().addClass("selected")
+
+				// var next_data = $(".mod-table .selected .next_data").text()
+				// console.log("next_data:", next_data)
 
 			})
 
-
-		},
+		}
 
 
 	} // end module.exports

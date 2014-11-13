@@ -130,7 +130,7 @@ input, select {
 body {
 	background-image: url("纹理");
 	background-repeat: repeat;
-	background-color: #3b80db;
+	background-color: #08184c;
 	width: 1024px;
 	height:1526px;
 	color: #ffffff;
@@ -143,8 +143,8 @@ body {
 .header {
 	width: 100%;
 	height: 45px;
-	background: #9dc0ed;
-	border-bottom: 1px solid #3b82b2;
+	background: #040c2f;
+	border-bottom: 1px solid #040c2f;
 	margin-bottom: 18px;
 	position: relative;
 }
@@ -169,7 +169,7 @@ body {
 	width: 135px;
 	height: 1365px;
 	margin-right: 6px;
-	background-color: #a7d3f1;
+	background-color: #050c32;
 	background-image: url("纹理");
 	background-repeat: repeat;
 	position: relative;
@@ -194,7 +194,7 @@ body {
 	border-bottom:1px solid #2a67b3;
 }
 .menu-list .selected {
-	background-color: #1a9af3;
+	background-color: #162e77;
 	border-bottom-color: #1a9af3;
 }
 
@@ -202,14 +202,14 @@ body {
 	float: left;
 }
 .main .wrap {
-	border:1px solid #0094da;
+	border:1px solid #3754a5;
 	margin-bottom:21px;
 }
 
 .main .wrap-header {
 	height: 38px;
-	background-color: #017cd2;
-	border: 1px solid #0094da;
+	background-color: #152a6a;
+	border: 1px solid #3754a5;
 	line-height: 41px;
 	text-indent: 48px;
 	position: relative;
@@ -225,7 +225,7 @@ body {
 }
 .main .wrap-content {
 	overflow: hidden;
-	background-color: #0267ad;
+	background-color: #000120;
 }
 
 
@@ -246,7 +246,7 @@ body {
 #calendar .date{
 	width: 304px;
 	height: 100%;
-	border-right: 1px solid #0094da;
+	border-right: 1px solid #324e9d;
 }
 #calendar .countdown {
 	width: 181px;
@@ -279,12 +279,20 @@ svg {
 	fill:#ffffff;
 	font-size: 13px;
 }
-#employee .x text{
+#employee .x text {
 	visibility: hidden;
+}
+#employee .x .tick, 
+#employee .x path {
+	display: none;
+}
+#employee .y path{
+	display: none;
 }
 .column_slide .chart .x text{
 	fill: none;
 }
+
 
 
 /*
@@ -400,6 +408,9 @@ table {
 }
 .table-box tr td:nth-child(4) {
 	text-align: center;
+}
+.table-box .select{
+	background-color: #025690;
 }
 /*
 	select 组件

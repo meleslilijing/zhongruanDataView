@@ -17,13 +17,7 @@ define(function(require, exports, module) {
 	// 添加表格中的选项 参数： group, 
 	var addOption = function(selectType, callback) {
 
-		// console.log("selectType:")
-		// console.log(selectType)
-
 		var selector = "#" + selectType
-
-		// console.log("selector:")
-		// console.log(selector)
 
 		// 在 $selector 中添加 option
 		var $selector = $(".mod-table .wrap-content").find(selector)
@@ -70,7 +64,6 @@ define(function(require, exports, module) {
 					if (data[i]) {
 						option += "<option value = " + data[i] + ">" + data[i] + "</option>"	
 					}
-
 					
 					// console.log(data[i])
 				}
@@ -93,10 +86,6 @@ define(function(require, exports, module) {
 			}
 		}) // end $.ajax()
 
-
-		// console.log("selector_url:")
-		// console.log(selector_url)
-
 	} // addOption()
 
 	var addTableItem = function () {
@@ -108,31 +97,64 @@ define(function(require, exports, module) {
 		var deliveralbe_type = "/" + $("#deliveralbe-type").val()
 		var market = "/" + $("#market").val()
 
-		// console.log("group:", group)
-		// console.log("workGroup:", workGroup)
-		// console.log("deliveralbe_type:", deliveralbe_type)
-		// console.log("market:", market)
-
 		var BASE_URL = "http://192.168.0.141:8080/Deliverable/service"
 
-		var url = BASE_URL + "/employee/statusByTime" + employeeName + group + workGroup + deliveralbe_type + market
-		// console.log("表格url:", url)
+		// var url = BASE_URL + "/employee/statusByTime" + employeeName + group + workGroup + deliveralbe_type + market
 
+		var url = "http://localhost:8080/Deliverable/service" + "/employer/statusByTime/cmc/all"	// 测试用数据
+
+		
 		$.ajax({
 			type: "GET",
-			dataType: "jsonp",
-			// url: "http://localhost:8080/Deliverable/service/employer/statusByTime/cmc/all",
-			// url: url,
+			dataType: "jsonp",							   
+			url: "http://localhost:8080/Deliverable/service/admin/departmentYear/cmc/2014",
+			url: url,
 			success: function (data) {
-				
+
 				/*
-				*	将获得的数据显示在表格中
-				*	因为，Market 的数值的最后一个字符是 “;”.
-				*	所以今天干不完了
+				*	每一行结果
+				*	<tr>
+				*		<td>Diltiaz
+				*		<td><i></i>
+				*		<td>2013-4-
+				*		<td></td>
+				*	</tr>
 				*/
-				console.log("表格每一行的 data:")
-				console.log(data)
-				console.log("\n")
+				for (var type in data) {
+
+					var data_key = type
+					var data_class = data_key.replace(/\s/g, "_")
+					
+					var bg_color = COLORS(data_key)
+
+					// 因为数据太多，暂时每一种状态只显示 6 条数据
+					for (var i = 0; i < 6 && i < data[type].length; i++) {
+
+						var data_Value = data[type][i]
+
+						var Deliverable_Title = data_Value["Title"]
+						var DocFlow_Status = data_key
+						var Next_Milestone_Date = data_Value["Reporting Period Cut-off Date"]
+						var PDO = data_Value["Primary Deliverable Owner"]
+
+						/*
+						*	表格对应的值
+						*	Deliverable Title		key[i].Title
+						*	DocFlow Status  		key
+						*	Next Milestone Date 	Reporting Period Cut-off Date
+						*	PDO						Primary Deliverable Owner
+						*/
+						var td = '<td>' + Deliverable_Title + '</td>' +
+						'<td><i style="background-color:' + bg_color + '"></i>' + data_key + '</td>' +
+						'<td class="next_data">' + Next_Milestone_Date + '</td>'+
+						'<td>' + PDO + '</td>'
+
+						var tr = '<tr class="' + data_class + '">' + td + '</tr>'
+
+						$(".mod-table .table-box tbody").append(tr)
+					}
+
+				}
 
 
 			}
@@ -143,8 +165,6 @@ define(function(require, exports, module) {
 	var initTable = function() {
 
 		var $table = $(".mod-table .wrap-content")
-
-		$table.html("")
 
 		var form =
 			'<form action="">' +
@@ -159,7 +179,7 @@ define(function(require, exports, module) {
 
 			'<label for="market">Market: </label>' +
 			'<select id="market"></select>' +
-			'</form>'
+			'</form>';
 
 		var tableBox =
 			'<div class="table-box">' +
@@ -173,7 +193,7 @@ define(function(require, exports, module) {
 			'</tr>' +
 			'</tbody>' +
 			'</table>' +
-			'</div>'
+			'</div>';
 
 		$table.append(form)
 		$table.append(tableBox)
@@ -189,14 +209,42 @@ define(function(require, exports, module) {
 		})
 	}
 
+	var clean = function () {
+
+		var $table = $(".mod-table .wrap-content")
+
+		$table.html("")
+	}
+
 	module.exports = {
 
 		create: function() {
+
+			// 清空表格
+			clean()
 
 			// 初始化表格
 			initTable()
 
 		}, // end create()
+		filter: function (status) {
+
+			status = "." + status.replace(/\s/g, "_")
+
+			d3.selectAll(".mod-table .table-box tbody td")
+				.transition()
+				.duration(window.DURATION)
+				.style("display", "none")
+
+			d3.select(".mod-table .table-box").selectAll(status).selectAll("td")
+				.transition()
+				.duration(window.DURATION)
+				.style("display", "block")
+
+		},
+		showAll: function () {
+			d3.selectAll(".mod-table .table-box tbody td").style("display", "block")
+		}
 
 	} // end module.exports{}
 })

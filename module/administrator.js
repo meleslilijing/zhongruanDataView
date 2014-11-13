@@ -10,10 +10,22 @@ define(function(require, exports, module) {
 	// 数据与颜色间映射
 	window.COLORS = d3.scale.ordinal()
 		.range([
-			"#ed514d", "#46affe", "#ff7a38",
-			"#ff9a38", "#ffb638", "#ffcf3e",
-			"#ffd967", "#ffde95", "#85d678"
+			"#c13531", "#c95400", "#cf7f00",
+			"#e7ad00", "#c9f263", "#9bdc00",
+			"#1adfbd", "#20b476", "#e3d100"
 		])
+
+	window.SORT_ARR = [
+		"Discontinued",
+		"Scheduled",
+		"Assigned",
+		"Initiated",
+		"Authoring",
+		"Review",
+		"Approval",
+		"Completed",
+		"Call for Contributions"
+	]
 
 	window.legen_rect = {
 		"width": 13,

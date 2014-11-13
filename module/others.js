@@ -49,12 +49,10 @@ define(function(require, exports, module) {
 				// 重新绘制图表
 				mode_1.create(USERTYPE, DEPARTMENTNAME, YEAR)
 				mode_2.create(DEPARTMENTNAME, YEAR)
-				mode_3.init()
+				mode_3.create()
 
 				// 重新绑定 animation 事件
 				mode_4.administrator()
-
-
 
 			} else if (window.USERTYPE == "manager") {
 
@@ -62,11 +60,10 @@ define(function(require, exports, module) {
 
 				mode_1.create(USERTYPE, DEPARTMENTNAME, YEAR, USER_NAME)
 				mode_2.create(DEPARTMENTNAME, YEAR, USER_NAME)
-				mode_3.init()
+				mode_3.create()
 
 				// animation
 				mode_4.manager()
-
 			}
 
 			ev.stopPropagation()
@@ -110,8 +107,8 @@ define(function(require, exports, module) {
 
 					} else {
 
-						console.error("没有年份数据。")
-						
+						years = [2011, 2012, 2013, 2014]
+						console.error("没有年份数据，示例年份：", years)
 					}
 
 					var select = ""

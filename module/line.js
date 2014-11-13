@@ -130,32 +130,36 @@ define(function(require, exports, module) {
 					var extent = extentData(data)
 
 					xScale.domain(months)
-					yScale.domain(extent)
+					yScale.domain([0, extent[1]])
 
 					chart.append("g").classed("x axis", true).call(xAxis)
 						.attr("transform", "translate(0," + height + ")")
 
 					chart.append("g").classed("y axis", true).call(yAxis)
 
-					d3.selectAll(".chart .y .tick line").attr({
-						x2: 0,
-						y2: 0,
-					})
-						.transition()
-						.duration(window.DURATION)
-						.attr("x2", width)
+					// d3.selectAll(".chart .y .tick line")
+					// 	.attr({
+					// 		x2: 0,
+					// 		y2: 0,
+					// 	})
+					// 	.transition()
+					// 	.duration(window.DURATION)
+					// 	.attr("x2", width)
 
-					d3.selectAll(".chart .x .tick line").attr({
-						x2: 0,
-						y2: 0,
-					})
-						.transition()
-						.duration(window.DURATION)
-						.attr("y2", -height)
+					// d3.selectAll(".chart .x .tick line")
+					// 	.attr({
+					// 		x2: 0,
+					// 		y2: 0,
+					// 	})
+					// 	.transition()
+					// 	.duration(window.DURATION)
+					// 	.attr("y2", -height)
 
 					// 折线图内容
 					var chart_content = chart.append("g")
-						.classed("chart-content", true)
+												.classed("chart-content", true)
+
+
 
 
 					for (var lineName in data) {
@@ -173,7 +177,10 @@ define(function(require, exports, module) {
 							lineDatas.push(obj)
 						}
 
-						chart_content.append("path")
+						var chart_line = chart_content.append("g").classed("path", true)
+
+						chart_line
+							.append("path")
 							.attr({
 								d: line(lineDatas),
 								stroke: function(d, i) {
@@ -190,6 +197,25 @@ define(function(require, exports, module) {
 							.transition()
 							.duration(window.DURATION)
 							.attr("opacity", 1)
+
+						chart_line
+							.selectAll(".tips")
+							.data(lineDatas).enter()
+							.append("g").classed("tips", true)
+							.append("text")
+							.attr({
+								x: function(d, i) {
+									return xScale(d.month)
+								},
+								y: function(d, i) {
+									return yScale(d.data)
+								},
+								fill: "#ffffff",
+								opacity: 0
+							})
+							.text(function (d) {
+								return d.data
+							})
 					}
 
 					// 添加图例
@@ -226,8 +252,6 @@ define(function(require, exports, module) {
 						x: 435,
 						y: 65
 					}]
-
-
 
 					var legen_item = svg.append("g").classed("legen", true)
 						.selectAll(".legen-item")
@@ -283,7 +307,7 @@ define(function(require, exports, module) {
 			var year = year || "/2014"
 
 			// 添加 years select
-			others.addYearsSelect("administrator", ".line .wrap-content", departmentName)
+			// others.addYearsSelect("administrator", ".line .wrap-content", departmentName)
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 
@@ -336,11 +360,11 @@ define(function(require, exports, module) {
 
 			var index = index || 0
 
-			point = d3.selectAll(".line .chart-content path").filter(function(d, i) {
+			point = d3.selectAll(".line .chart-content .path").filter(function(d, i) {
 				return i == index
 			})
 
-			siblings = d3.selectAll(".line .chart-content path").filter(function(d, i) {
+			siblings = d3.selectAll(".line .chart-content .path").filter(function(d, i) {
 				return i != index
 			})
 
@@ -354,13 +378,26 @@ define(function(require, exports, module) {
 					"opacity": 1
 				})
 
-			siblings
+			point.selectAll(".tips").select("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 1)
+				.attr("fill", "#ffffff")
+
+
+			siblings.select("path")
 				.transition()
 				.duration(window.DURATION)
 				.attr({
 					"opacity": 0.1,
 					"stroke": "#333"
 				})
+
+			siblings.selectAll(".tips").select("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 0)
+				// .attr("fill", "#333")
 			// $this.find("text").css("fill", "#ffffff")	// 还未显示文字
 
 			// $siblings.find("text").css("fill", "#333")
@@ -368,16 +405,22 @@ define(function(require, exports, module) {
 
 		recolorAnimation: function() {
 
-			d3.selectAll(".line path")
+			var path = d3.selectAll(".line .path")
+			
+			path.select("path")
 				.transition()
 				.duration(window.DURATION)
+					.attr({
+						stroke: function(d) {
+							return d3.select(this).attr("color")
+						},
+						opacity: 1
+					})
 
-			.attr({
-				stroke: function(d) {
-					return d3.select(this).attr("color")
-				},
-				opacity: 1
-			})
+			path.selectAll("text")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 0)
 
 			var legen = d3.selectAll(".line .legen-item")
 				.transition()

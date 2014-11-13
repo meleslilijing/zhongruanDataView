@@ -108,7 +108,7 @@ define(function(require, exports, module) {
 				.rangeBands([0, width], .7)
 
 			var yScale = d3.scale.linear()
-				.range([height - 5, 0])
+				.range([height , 0])
 
 			// 数轴
 			var xAxis = d3.svg.axis()
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
 
 					// 输入值域
 					xScale.domain(window.SORT_ARR)
-					yScale.domain(extent)
+					yScale.domain([0, extent[1]])
 
 					var chart = svg.append("g")
 						.classed("chart", true)
