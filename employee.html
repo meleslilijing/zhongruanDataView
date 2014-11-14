@@ -5,16 +5,18 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1.0">
 		<link href="./css/style.css" rel="stylesheet" type="text/css" />
 	</head>
-	<body id="employee">
+	<body id="employee" style="position: relative;">
 		<div class="container">
 			<div class="header">
 				<div class="logo">
-					<img src="#" alt="LOGO" />
+					<!-- <img src="#" alt="LOGO" /> -->
+					<div style="font-size: 20px; position: absolute; left: 13px; top: 14px">LOGO</div>
 				</div>
+				<div class="search"></div>
+				<div class="user-information">Jason Maraz</div>
 				<div class="user-image"></div>
 			</div>
 			<div class="content">
-				
 				<div class="main">
 					<div class="wrap w486 fl" id="calendar">
 						<div class="wrap-header"><i class="wrap-icon"></i>CALENDAR</div>
@@ -27,7 +29,15 @@
 								<div class="btn" id="nextMonth"></div>
 							</div>
 							<div class="countdown fl">
+
+								<div class="countdown-box">
+									<div class="title">Count down</div>
+									<div class="day"><span class="ten">0</span><span class="bit">0</span>D</div>
+									<div class="month"><span>0</span>M</div>
+									<div class="year"><span>0</span>Y</div>
+								</div>
 								
+
 							</div>
 							
 						</div>
@@ -72,31 +82,6 @@
 										<th class="RP-Start-Date">Next Milestone Date </th>
 										<th class="General-Comments">PDO</th>
 									</tr>
-									<tr>
-										<td>Diltiazem 2010 CO for Romania</td>
-										<td><i></i>Assigned</td>
-										<td>2013-4-26</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Alprostadil - Caverject 2011 PSUR</td>
-										<td><i></i>Completed</td>
-										<td>2013-4-19</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Ampicillin Sulbactam 2015 PSUR</td>
-										<td><i></i>Discontinued</td>
-										<td>2013-4-19</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Amlodipine 2010 IB</td>
-										<td><i></i>Review</td>
-										<td>2013-4-19</td>
-										<td></td>
-									</tr>
-									
 								</table>								
 							</div>
 
@@ -104,6 +89,9 @@
 					</div>
 				</div>	
 			</div>
+		</div>
+		<div style="z-index:99;position:absolute;top:0; left: 0;width: 100%; height: 100%; display:block;" id="loading">
+			<img src="./image/loading.gif" alt="" style="width: 100%; height: 100%;">
 		</div>
 		<script src="./lib/d3.v3.min.js"></script>
 		<script src="./lib/zepto.min.js"></script>

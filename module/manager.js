@@ -17,6 +17,16 @@ define(function(require, exports, module) {
 			"#e7ad00", "#c9f263", "#9bdc00",
 			"#1adfbd", "#20b476", "#e3d100"
 		])
+	window.BG_COLORS = "#004d82"
+
+	// 异步管理器
+	window.FLAG = 0
+	window.FLAG_OVER = 3
+
+	// 关闭 loading DOM
+	window.CLOSE_LOADING = function () {
+		$("#loading").css("display", "none")
+	}
 
 	window.NAME_LIST_POINT = 0	// 姓名列表计数
 	window.CHART_POINT_NO
@@ -39,7 +49,7 @@ define(function(require, exports, module) {
 		"width": 13,
 		"height": 13,
 	}
-// 
+
 	window.DURATION = 1000 // 动画持续时间
 
 	// 添加部门员工列表

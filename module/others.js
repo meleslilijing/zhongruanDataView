@@ -5,6 +5,8 @@ define(function(require, exports, module) {
 
 		var mode_1, mode_2, mode_3, mode_4
 
+
+
 		if (window.USERTYPE == "administrator") {
 
 			seajs.use(
@@ -37,6 +39,11 @@ define(function(require, exports, module) {
 		// var animation = require("./animation.js")
 
 		touch.on(".menu-list", "tap", function(ev) {
+
+			$("#loading").css("display", "block")
+			window.FLAG = 0
+
+			console.log("FLAG:", FLAG)
 
 			$(".menu-list .selected").removeClass("selected")
 			$(this).addClass("selected")
@@ -79,6 +86,9 @@ define(function(require, exports, module) {
 
 		// 为折线图 和 slide分组柱图 添加用于选择年份的select标签
 		addYearsSelect: function(type, selector, departmentName) {
+
+			// test 隐藏所有年份选择
+			return
 
 			var BASE_URL = "http://localhost:8080/Deliverable/service"
 			var url

@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 		return [min, max]
 	}
 
-	var clean = function () {
+	var clean = function() {
 		$(".line .wrap-content").html("")
 	}
 
@@ -157,10 +157,7 @@ define(function(require, exports, module) {
 
 					// 折线图内容
 					var chart_content = chart.append("g")
-												.classed("chart-content", true)
-
-
-
+						.classed("chart-content", true)
 
 					for (var lineName in data) {
 
@@ -198,22 +195,45 @@ define(function(require, exports, module) {
 							.duration(window.DURATION)
 							.attr("opacity", 1)
 
-						chart_line
+						var tips = chart_line
 							.selectAll(".tips")
 							.data(lineDatas).enter()
 							.append("g").classed("tips", true)
-							.append("text")
 							.attr({
-								x: function(d, i) {
-									return xScale(d.month)
+								transform: function(d) {
+									var x = xScale(d.month) - 20
+									var y = yScale(d.data) - 25
+
+									return "translate(" + x + "," + y + ")"
 								},
-								y: function(d, i) {
-									return yScale(d.data)
-								},
-								fill: "#ffffff",
 								opacity: 0
 							})
-							.text(function (d) {
+
+						tips.append("rect")
+							.attr({
+								width: 30,
+								height: 20,
+								fill: "#f7fff2",
+								rx: 5,
+								ry: 5
+
+							})
+
+						tips.append("text")
+							.attr({
+								// x: function(d, i) {
+								// 	return xScale(d.month)
+								// },
+								// y: function(d, i) {
+								// 	return yScale(d.data)
+								// },
+								"text-anchor": "star",
+								dy: "1em",
+								dx: "0.4em",
+								fill: BG_COLORS,
+								// opacity: 0
+							})
+							.text(function(d) {
 								return d.data
 							})
 					}
@@ -292,12 +312,19 @@ define(function(require, exports, module) {
 						.duration(window.DURATION)
 						.attr("opacity", 1)
 
-					// // 交互
-					// animationLine()
+					
+					window.FLAG++ // 加载完毕，增加flag量
+
+					// 关闭 loading DOM
+					if (FLAG == FLAG_OVER) {
+						window.CLOSE_LOADING()
+					}
+
+
 				} // end success
 			}) // end $.ajax
 
-	} // end draw
+		} // end draw
 
 	module.exports = {
 
@@ -348,12 +375,12 @@ define(function(require, exports, module) {
 			siblings.select("rect")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 
 			siblings.select("text")
 				.transition()
 				.duration(window.DURATION)
-				.style("fill", "#333")
+				.style("fill", BG_COLORS)
 		},
 
 		pathAnimation: function(index) {
@@ -378,46 +405,44 @@ define(function(require, exports, module) {
 					"opacity": 1
 				})
 
-			point.selectAll(".tips").select("text")
+			point.selectAll(".tips")
 				.transition()
 				.duration(window.DURATION)
 				.attr("opacity", 1)
-				.attr("fill", "#ffffff")
-
 
 			siblings.select("path")
 				.transition()
 				.duration(window.DURATION)
 				.attr({
 					"opacity": 0.1,
-					"stroke": "#333"
+					"stroke": BG_COLORS
 				})
 
-			siblings.selectAll(".tips").select("text")
+			siblings.selectAll(".tips")
 				.transition()
 				.duration(window.DURATION)
 				.attr("opacity", 0)
-				// .attr("fill", "#333")
+			// .attr("fill", BG_COLORS)
 			// $this.find("text").css("fill", "#ffffff")	// 还未显示文字
 
-			// $siblings.find("text").css("fill", "#333")
+			// $siblings.find("text").css("fill", BG_COLORS)
 		},
 
 		recolorAnimation: function() {
 
 			var path = d3.selectAll(".line .path")
-			
+
 			path.select("path")
 				.transition()
 				.duration(window.DURATION)
-					.attr({
-						stroke: function(d) {
-							return d3.select(this).attr("color")
-						},
-						opacity: 1
-					})
+				.attr({
+					stroke: function(d) {
+						return d3.select(this).attr("color")
+					},
+					opacity: 1
+				})
 
-			path.selectAll("text")
+			path.selectAll(".tips")
 				.transition()
 				.duration(window.DURATION)
 				.attr("opacity", 0)

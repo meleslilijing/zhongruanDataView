@@ -153,6 +153,29 @@ body {
 	height: 100%;
 	background-color:blue;
 }
+
+.search {
+	position: absolute;
+	left: 673px;
+	top: 10px;
+	width: 143px;
+	height: 23px;
+	border: 1px solid #3e3e4c;
+}
+
+.header .user-information {
+	position: absolute;
+	left: 834px;
+	top: 10px;
+	width: 126px;
+	height: 23px;
+	line-height: 23px;
+	font-size: 14px;
+	color: #848484;
+	text-indent: 12px;
+	border: 1px solid #3e3e4c;
+}
+
 .header .user-image {
 	width: 35px;
 	height: 35px;
@@ -161,7 +184,6 @@ body {
 	position: absolute;
 	top: 4px;
 	right: 14px;
-	background-color:blue;
 }
 
 .menu {
@@ -214,19 +236,46 @@ body {
 	text-indent: 48px;
 	position: relative;
 } 
-.main .wrap-header .wrap-icon {
+.main .wrap-icon {
 	width: 24px;
 	height: 24px;
 	display: inline-block;
 	position: absolute;
 	left: 15px;
 	top: 10px;
-	background-color:blue;
+	background: blue;
 }
 .main .wrap-content {
 	overflow: hidden;
 	background-color: #000120;
 }
+.header .search {
+	background: url("../image/icon2.png") no-repeat 120px 3px;	
+}
+.header .user-information {
+	background: url("../image/icon2.png") no-repeat 105px -25px;
+}
+.header .user-image {
+	background: url("../image/icon.png") no-repeat 0 -60px;	
+}
+.pie .wrap-icon {
+	background: url("../image/icon.png") no-repeat 0 0;
+}
+.column_slide .wrap-icon,
+.line .wrap-icon {
+	background: url("../image/icon.png") no-repeat -30px 0;
+}
+.mod-table .wrap-icon {
+	background: url("../image/icon.png") no-repeat -60px 1px;	
+}
+.column .wrap-icon {
+	background: url("../image/icon.png") no-repeat -93px 0px;	
+}
+#calendar .wrap-icon {
+	background: url("../image/icon.png") no-repeat -128px 0px;	
+}
+	
+
 
 
 /*
@@ -251,12 +300,69 @@ body {
 #calendar .countdown {
 	width: 181px;
 	height: 100%;
+	position: 
 }
+#calendar .countdown-box {
+	position: relative;;
+}
+
+#calendar .countdown .title {
+	position: absolute;
+	font-size: 16px;
+	left: 45px;
+	top: 51px;
+}
+#calendar .countdown .day{
+	position: absolute;
+	left: 38px;
+	top: 107px;
+}
+#calendar .countdown .month{
+	position: absolute;
+	left: 56px;
+	top: 207px;
+}
+#calendar .countdown .year{
+	position: absolute;
+	left: 100px;
+	top: 207px;
+}
+
+#calendar .countdown .day span {
+	display:block;
+	float: left;
+	width: 42px;
+	height: 76px;
+	border: 2px solid #025690;
+	font-size: 56px;
+	line-height: 76px;
+	margin-left: 3px;
+	text-align: center;
+}
+#calendar .countdown .month span,
+#calendar .countdown .year span  {
+	display: block;
+	float: left;
+	width: 17px;
+	height: 30px;
+	border: 1px solid #025690;
+	font-size: 22px;
+	line-height: 30px;
+	text-align: center;
+}
+
+
 .mod-table .table-box,
 #employee .table-box {
 	margin-top: 27px;
 	width: 782px;
 	height: 334px;
+}
+
+#administrator form, 
+#manager form, 
+#employee form {
+	display: none;
 }
 
 /*
@@ -353,7 +459,7 @@ table {
 	height: 36px;
 	line-height: 36px;
 	font-size: 13px;
-	border:1px solid #ffffff;
+	border:1px solid #334e9d;
 }
 .mod-table form {
 	width: 782px;
@@ -386,12 +492,11 @@ table {
 .table-box .General-Comments {
 	width: 128px;
 }
-
 .table-box tr td:first-child {
 	text-indent: 8px;
 }
 .table-box tr td:nth-child(2) {
-	text-indent: 66px;
+	text-indent: 56px;
 	position: relative;
 }
 .table-box tr td:nth-child(2) i{
@@ -401,7 +506,7 @@ table {
 	width: 17px;
 	height: 17px;
 	border-radius: 9px;
-	background-color: red;
+	background-color: #f4da00;
 }
 .table-box tr td:nth-child(3) {
 	text-align: center;
@@ -412,6 +517,11 @@ table {
 .table-box .select{
 	background-color: #025690;
 }
+.mod-table .selected {
+	background: #025690;
+}
+
+
 /*
 	select 组件
 */

@@ -217,6 +217,101 @@ define(function(require, exports, module) {
 		// 日历组件初始化
 		init: function() {
 			initCalendar()
+		},
+
+		updataCountdown: function (nextDay) {
+
+			console.log("更新倒计时")
+
+			/*
+				范围:
+					 month: 0~11
+					 day: 1~31
+			*/
+			var today = new Date()
+
+			var today_year = today.getFullYear()
+			var today_month = today.getMonth()
+			var today_date = today.getDate()
+
+			var nextDay_arr = nextDay.split("-")
+
+			var nextDay_year = nextDay_arr[0]
+			var nextDay_month = nextDay_arr[1] - 1
+			var nextDay_date = nextDay_arr[2]
+
+			var year = nextDay_year - today_year
+			var month = nextDay_month - today_month
+			var date = nextDay_date - today_date
+
+			// 判断接下来的任务是否发生在未来
+			var isFutureMission = true
+			if(year < 0 || month < 0 || data < 0) {
+				isFutureMission = false
+			}
+
+			// if(isFutureMission) {
+
+				// 更新倒计时牌
+				
+
+				var countdown = date
+
+				if (date < 0) {
+					date= -date
+				}
+				if (year < 0) {
+					year = -year
+					console.log("year:", year)
+				}
+				if (month < 0) {
+					month = -month
+					console.log("month:", month)
+				}
+
+				if(date<10) {
+					date = "0" + date
+				}
+
+				var $box = $(".countdown-box")
+				$box.find(".year span").text(year)
+				$box.find(".month span").text(month)
+
+				var date_arr = date.toString().split("")
+				$box.find(".day .ten").text(date_arr[0])
+				$box.find(".day .bit").text(date_arr[1])
+
+			// }
+
+			// 更新日历背景
+
+			$("#calendar tbody td").css("background", "none")
+
+			var $point = $("#calendar .today").prev()
+			for (var i = 0; i < countdown; i++) {
+				
+				var index = $point.index()
+
+				if (index == 6) {
+					$point = $point.parent().next().find("td").eq(0).css("background", "#f4da00")
+				} else {
+					$point = $point.next().css("background", "#f4da00")
+				}
+			}
+
+		},
+		
+		resetCountdown: function () {
+
+			// 重置 日历
+			$("#calendar .date td")
+				.css("background", "none")
+
+			var $countdown = $(".countdown-box")
+
+			$countdown.find("span")
+				.text("0")
+
 		}
 
 	} // end module.exports

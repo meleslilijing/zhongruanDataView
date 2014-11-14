@@ -33,7 +33,24 @@ define(function(require, exports, module) {
 
 		}
 
-		// formatData
+		// 判断是否全为 0 
+		var isAllZero = true
+		for (var i = 0; i < array.length; i++) {
+
+			if (array[i].complete != 0 && array[i].notComplete!=0) {
+				isAllZero = false
+			}
+
+		}
+
+		// 生成随机数据
+		if (isAllZero) {
+			for (var i = 0; i < array.length; i++) {
+				array[i].complete = parseInt(Math.random() * 100)
+				array[i].notComplete = parseInt(Math.random() * 100)
+			}
+		}
+
 		return array
 	}
 
@@ -131,6 +148,8 @@ define(function(require, exports, module) {
 
 				}
 
+				console.log("data:", data)
+
 				var chart_no_class = "no_" + window.CHART_NO
 
 				var chart_content = chart.append("g").classed("chart_content", true)
@@ -148,9 +167,10 @@ define(function(require, exports, module) {
 
 				employeeName.selectAll("rect")
 					.data(function(d) {
+						console.log("d.value:", d.value)
 						return d.value
 					})
-					.enter().append("rect")
+					.enter().append("rect").classed("rect", true)
 					.attr({
 						x: function(d) {
 							return x1(d.key)
@@ -180,27 +200,55 @@ define(function(require, exports, module) {
 						},
 					})
 
-				employeeName.selectAll("text")
-					.data(function(d) {
-						return d.value
-					}).enter()
-					.append("text").classed("tips", true)
+
+				var tips = employeeName.selectAll(".tips")
+							.data(function(d) {
+								return d.value
+							}).enter()
+							.append("g").classed("tips", true)
+							.attr({
+								"transform": function (d) {
+
+									var centerPoint = x1(d.key) + x1.rangeBand() / 2 // 中点
+
+									var x_tips = centerPoint - 13
+									var y_tips = y(d.value) - 30
+
+									return "translate(" + x_tips + "," + y_tips + ")"
+								},
+								opacity: 0	
+							})
+
+
+				tips.append("rect")
 					.attr({
-						x: function(d) {
-							return x1(d.key) + x1.rangeBand() / 2
-						},
-						y: function(d) {
-							return y(d.value) - 5 // 5 为偏移量
-						},
+						width: 26,
+						height: 20,
+						fill: "#f7fff2",
+						rx: 5,
+						ry: 5,
+					})
+
+				tips.append("text")
+					.attr({
+						// x: function(d) {
+						// 	return x1(d.key) + x1.rangeBand() / 2
+						// },
+						// y: function(d) {
+						// 	return y(d.value) - 5 // 5 为偏移量
+						// },
 						"text-anchor": "middle",
-						fill: "#ffffff"
+						x: 13,
+						dy: "1em",
+						fill: BG_COLORS
 					})
 					.text(function(d, i) {
 						return d.value
 					})
 
+				// 生成人名
 				employeeName
-					.append("text")
+					.append("text").classed("name", true)
 					.text(function(d) {
 						return d.name
 					})
@@ -215,8 +263,15 @@ define(function(require, exports, module) {
 					})
 
 
+					
 
-				// animation()
+				window.FLAG++	// 加载完毕，增加flag量
+				console.log("FLAG:", FLAG)
+				// 关闭 loading DOM
+				if (FLAG == FLAG_OVER) {
+					window.CLOSE_LOADING()
+				}
+
 
 			} // end success()
 		}) // end $.ajax()
@@ -308,7 +363,7 @@ define(function(require, exports, module) {
 			var svg = d3.select(".column_slide .wrap-content").append("svg")
 
 			var chart = svg.append("g").classed("chart", true)
-				.attr("transform", "translate(" + left + "," + top + ")")
+					.attr("transform", "translate(" + left + "," + top + ")")
 
 			this.addChart(departmentName, year, employeeName)
 			addLegen()
@@ -381,24 +436,24 @@ define(function(require, exports, module) {
 				.duration(window.DURATION)
 				.attr("fill", color)
 
-			point.select("text")
-				.transition()
-				.duration(window.DURATION)
-				.style("fill", "#ffffff")
+			// point.select("text")
+			// 	.transition()
+			// 	.duration(window.DURATION)
+			// 	.style("fill", "#ffffff")
 
 
 			siblings.select("rect")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 
 			siblings.select("text")
 				.transition()
 				.duration(window.DURATION)
-				.style("fill", "#333")
+				.style("fill", BG_COLORS)
 
 			d3.select(".column_slide .chart_content")
-				.selectAll("g rect")
+				.selectAll("g .rect")
 				.filter(function(d, i) {
 					return i % packetNum == index
 				})
@@ -407,14 +462,41 @@ define(function(require, exports, module) {
 				.attr("fill", color)
 
 			d3.select(".column_slide .chart_content")
-				.selectAll("g")
-				.selectAll("rect")
+				.selectAll("g .rect")
 				.filter(function(d, i) {
 					return i % packetNum != index
 				})
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
+
+			// // tips
+			var tips_selected = d3.select(".column_slide .chart_content")
+									.selectAll("g .tips")
+									.filter(function(d, i) {
+										return i % packetNum == index
+									})
+									.transition()
+									.duration(window.DURATION)
+									.attr("opacity", 1)
+
+			var tips_others = d3.select(".column_slide .chart_content")
+									.selectAll("g .tips")
+									.filter(function(d, i) {
+										return i % packetNum != index
+									})
+									.transition()
+									.duration(window.DURATION)
+									.attr({
+										opacity:0,
+									})
+
+			tips_selected.select("rect")
+				.attr("fill", "#f7fff2")
+
+
+
+			// tips_others.attr("opacity", 0)
 
 		}, // end legenAnimation()
 
@@ -446,7 +528,7 @@ define(function(require, exports, module) {
 				.transition()
 				.duration(window.DURATION)
 				.attr({
-					fill: "#333"
+					fill: BG_COLORS
 				})
 		}, // end rectAnimation()
 
@@ -468,12 +550,18 @@ define(function(require, exports, module) {
 				.style("fill", "#ffffff")
 
 			d3.select(".column_slide .chart_content").selectAll(".g")
-				.selectAll("rect")
+				.selectAll(".rect")
 				.transition()
 				.duration(window.DURATION)
 				.attr("fill", function(d, i) {
 					return COLORS(d.key)
 				})
+
+			d3.selectAll(".column_slide .chart_content .tips")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 0)
+
 		}, // end recolorAnimation()
 
 	} // end module.exports

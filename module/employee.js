@@ -14,6 +14,17 @@ define(function(require, exports, module) {
 			"#1adfbd", "#20b476", "#e3d100"
 		])
 
+	window.BG_COLORS = "#004d82"
+
+	// 异步管理器
+	window.FLAG = 0
+	window.FLAG_OVER = 2
+
+	// 关闭 loading DOM
+	window.CLOSE_LOADING = function () {
+		$("#loading").css("display", "none")
+	}
+
 	window.SORT_ARR = [
 		"Discontinued",
 		"Scheduled",
@@ -41,22 +52,7 @@ define(function(require, exports, module) {
 		column.create(USER_NAME)
 		table.create()
 		animation.employee()
-
-
 	})
-
-	// AMERsawans12", "AMERkananis", "EMEAsmith_ma", "AMERneymani", "AMERgribkog", "AMERmokhav
-	$.ajax({
-		type: "GET", 
-		dataType: "jsonp",
-		url:"http://localhost:8080/Deliverable/service/employer/employees/cmc/2014/AMERsawans12,AMERkananis,EMEAsmith_ma,AMERneymani,AMERgribkog,AMERmokhav",
-		success: function (data) {
-			console.log("data ---：")
-			console.log(data)
-		}
-
-	})
-
 
 
 })

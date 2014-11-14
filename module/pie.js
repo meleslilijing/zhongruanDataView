@@ -252,6 +252,13 @@ define(function(require, exports, module) {
 				// Pie图的交互效果
 				// animation()
 
+				window.FLAG++	// 加载完毕，增加flag量
+				console.log("FLAG:", FLAG)
+				// 关闭 loading DOM
+				if (FLAG == FLAG_OVER) {
+					window.CLOSE_LOADING()
+				}
+
 			} // end success
 		}) // end $.ajax
 	}
@@ -288,6 +295,7 @@ define(function(require, exports, module) {
 			draw(url)
 
 
+
 		},
 		legenAnimation: function(index) {
 
@@ -322,12 +330,12 @@ define(function(require, exports, module) {
 			siblings.select("rect")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 
 			siblings.selectAll("text")
 				.transition()
 				.duration(window.DURATION)
-				.style("fill", "#333")
+				.style("fill", BG_COLORS)
 		},
 		pathAnimation: function(index) {
 
@@ -359,12 +367,12 @@ define(function(require, exports, module) {
 			siblings.select("path")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 
 			siblings.select("text")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 		},
 		recolorAnimation: function() {
 

@@ -3,7 +3,9 @@ define(function(require, exports, module) {
 	var pie = require("./pie.js")
 	var line = require("./line.js")
 	var column_slide = require("./column_slide.js")
+	var column = require("./column.js")
 	var table = require("./table.js")
+	var calendar = require("./calendar.js")
 
 	module.exports = {
 
@@ -114,7 +116,9 @@ define(function(require, exports, module) {
 				var index = $(this).parent().index()
 
 				// 筛选表格内容
-				table.filter(SORT_ARR[index])
+				var status = index == 0? "discontinued":"complete"
+
+				table.filter(status, true)
 
 				column_slide.legenAnimation(index)
 
@@ -126,45 +130,23 @@ define(function(require, exports, module) {
 			})
 
 			//	点击 column_slide 柱: column_slide 内部交互，重绘 pie 图
-			touch.on(".column_slide .wrap-content", "tap", ".chart_content rect, .x .tick text", function(ev) {
+			touch.on(".column_slide .wrap-content", "tap", ".chart_content rect", function(ev) {
 
 				var index = $(this).parent().index()
 
 				column_slide.rectAnimation(index)
 
 				// 重绘 pie 图
-				// do.something()
-				console.log("重绘 pie 图")
+				window.USER_NAME = $(this).parent().find(".name").text()
+				pie.create()
 
 				isColor = false
-
-				console.log(isColor)
 
 				ev.stopPropagation()
 			})
 
 			// recolor
-			touch.on(".pie svg", "tap", function(ev) {
-
-				console.log("pie recolor")
-
-				if (!isColor) {
-
-					// 显示所有表格项
-					table.showAll()
-
-					pie.recolorAnimation()
-
-					isColor = true
-
-					console.log(isColor)
-
-
-				}
-
-			})
-
-			touch.on(".column_slide .wrap-content", "tap", function(ev) {
+			touch.on(".column_slide svg", "tap", function(ev) {
 
 				console.log("column_slide recolor")
 
@@ -253,16 +235,65 @@ define(function(require, exports, module) {
 
 		employee: function () {
 
+
+			// 点击表格触发效果
 			touch.on(".mod-table", "tap", "tr", function (ev) {
 				
-				// var $this = $(this).parent()
+				var $this = $(this).parent()
 
-				// var $siblings = $this.siblings().removeClass("selected")
+				$this.addClass("selected")
 
-				// $(this).parent().addClass("selected")
+				$this.siblings().removeClass("selected")
 
-				// var next_data = $(".mod-table .selected .next_data").text()
-				// console.log("next_data:", next_data)
+				// 文件状态
+				var status = $this.find(".status").text()
+
+				// 截止时间
+				var next_data = $this.find(".next_data").text()
+
+				var index
+
+				// 获得 选择表格项，在柱图中的索引
+				for (var i = 0; i < SORT_ARR.length; i++) {
+					
+					if (SORT_ARR[i] == status) {
+						
+						index = i
+						break
+					}
+				}
+
+				column.lengenAnimation(index)
+				column.pathAnimation(index)
+
+				// updata 倒计时
+				calendar.updataCountdown(next_data)
+
+
+
+			}),	// end touch()
+
+			// 变色
+			touch.on(".column .wrap-content", "tap", ".legen-item rect, .legen-item text", function (ev) {
+
+				var index = $(this).parent().index()
+
+				column.lengenAnimation(index)
+				column.pathAnimation(index)
+				table.filter(SORT_ARR[index])
+
+				ev.stopPropagation()
+
+			}) 
+
+			// recolor
+			touch.on(".column svg, .mod-table .wrap-content", "tap", function () {
+
+				table.showAll()
+				column.recolorAnimation()
+
+				// 重置表格
+				calendar.resetCountdown()
 
 			})
 

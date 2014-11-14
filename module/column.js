@@ -108,7 +108,7 @@ define(function(require, exports, module) {
 				.rangeBands([0, width], .7)
 
 			var yScale = d3.scale.linear()
-				.range([height , 0])
+				.range([height, 0])
 
 			// 数轴
 			var xAxis = d3.svg.axis()
@@ -170,10 +170,15 @@ define(function(require, exports, module) {
 						})
 
 
-					chart.append("g")
+					var chart_content = chart.append("g")
 						.classed("chart-content", true)
-						.selectAll("rect")
+
+					var packet = chart_content.selectAll("g")
 						.data(data).enter()
+						.append("g").classed("packet", true)
+
+
+					packet
 						.append("rect")
 						.attr({
 							x: function(d) {
@@ -205,24 +210,39 @@ define(function(require, exports, module) {
 						})
 
 					// 添加标签
-					chart.append("g")
-						.classed("tips", true)
-						.selectAll("text")
-						.data(data).enter()
-						.append("text")
+					var tips = packet
+						.append("g").classed("tips", true)
 						.attr({
-							x: function(d) {
-								return xScale(d.key)
+							transform: function(d) {
+								var x = xScale(d.key) - 10
+								var y = yScale(d.value) - 25
+
+								return "translate(" + x + "," + y + ")"
 							},
-							y: function(d) {
-								return yScale(d.value)
-							},
-							fill: "#ffffff"
+							opacity: 1
 						})
-						// .style("text-an")
-						.text(function(d) {
-							return d.value
+
+					tips.append("rect")
+						.attr({
+							width: 30,
+							height: 20,
+							fill: "#f7fff2",
+							rx: 5,
+							ry: 5
+
 						})
+
+					tips.append("text")
+						.attr({
+							"text-anchor": "star",
+							dy: "1em",
+							dx: "0.4em",
+							fill: BG_COLORS
+						})
+					// .style("text-an")
+					.text(function(d) {
+						return d.value
+					})
 
 
 					// 添加图例
@@ -310,12 +330,20 @@ define(function(require, exports, module) {
 							opacity: 1
 						})
 
+					window.FLAG++ // 加载完毕，增加flag量
+					console.log("FLAG:", FLAG)
+					// 关闭 loading DOM
+					if (FLAG == FLAG_OVER) {
+						window.CLOSE_LOADING()
+					}
+
 				} // end success
 
 			}) // end $.ajax
 		} // end init
 
 	module.exports = {
+
 		create: function(employeeName) {
 
 			var employeeName = employeeName || "AMERsawans12"
@@ -329,19 +357,6 @@ define(function(require, exports, module) {
 		lengenAnimation: function(index) {
 
 			var index = index || 0
-
-			// $this = $(".column .legen-item").eq(index)
-			// $siblings = $this.siblings()
-
-			// var color = $this.attr("color")
-
-			// // 选择节点上色
-			// $this.find("rect").css("fill", color)
-			// $this.find("text").css("fill", "#ffffff")
-
-			// // 兄弟节点黑白
-			// $siblings.find("rect").css("fill", "#333")
-			// $siblings.find("text").css("fill", "#333")
 
 			var point = d3.selectAll(".column .legen-item").filter(function(d, i) {
 				return i == index
@@ -366,43 +381,64 @@ define(function(require, exports, module) {
 			siblings.select("rect")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("fill", BG_COLORS)
 
 			siblings.select("text")
 				.transition()
 				.duration(window.DURATION)
-				.style("fill", "#333")
+				.style("fill", BG_COLORS)
 		},
 
 		pathAnimation: function(index) {
 
 			var index = index || 0
 
-			d3.selectAll(".column .chart-content rect").filter(function(d, i) {
+			var point = d3.selectAll(".column .chart-content .packet").filter(function(d, i) {
 				return i == index
 			})
+
+			point.select("rect")
 				.transition()
 				.duration(window.DURATION)
 				.attr("fill", function(d) {
 					return d3.select(this).attr("color")
 				})
 
-			d3.selectAll(".column .chart-content rect").filter(function(d, i) {
-				return i != index
-			})
+			point.select(".tips")
 				.transition()
 				.duration(window.DURATION)
-				.attr("fill", "#333")
+				.attr("opacity", 1)
+
+			var siblings = d3.selectAll(".column .chart-content .packet").filter(function(d, i) {
+				return i != index
+			})
+
+			siblings.select("rect")
+				.transition()
+				.duration(window.DURATION)
+				.attr("fill", BG_COLORS)
+
+			siblings.select(".tips")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 0)
 		},
 
 		recolorAnimation: function() {
 
-			d3.selectAll(".column .chart-content rect")
+			var packet = d3.selectAll(".column .chart-content .packet")
+
+			packet.select("rect")
 				.transition()
 				.duration(window.DURATION)
 				.attr("fill", function(d) {
 					return COLORS(d.key)
 				})
+
+			packet.select(".tips")
+				.transition()
+				.duration(window.DURATION)
+				.attr("opacity", 1)
 
 			var legen = d3.selectAll(".column .legen .legen-item")
 				.transition()
